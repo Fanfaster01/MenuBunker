@@ -1,15 +1,15 @@
 const sql = require('mssql');
 
 const config = {
-  user: 'poweruser',
-  password: 'k8a3z7up',
-  server: '192.168.65.250',
-  database: 'XETUXPOS',
-  options: {
-    trustServerCertificate: true,
-    encrypt: false
-  }
-};
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    server: process.env.DB_HOST,
+    database: process.env.DB_NAME,
+    options: {
+      trustServerCertificate: true,
+      encrypt: false
+    }
+  };
 
 // Crear un pool global
 let pool = null;
