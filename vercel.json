@@ -1,5 +1,0 @@
-{
-    "buildCommand": "curl -fsSL https://tailscale.com/install.sh | sh && tailscale up --authkey=$TAILSCALE_AUTHKEY && next build",
-    "installCommand": "npm install",
-    "framework": "nextjs"
-  }
