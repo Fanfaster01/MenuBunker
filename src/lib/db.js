@@ -5,13 +5,19 @@ const config = {
   password: process.env.DB_PASSWORD,
   server: process.env.DB_HOST,
   database: process.env.DB_NAME,
-  port: 1433,  // Agregamos esta línea
+  port: 1433,
   options: {
     trustServerCertificate: true,
     encrypt: false,
-    enableArithAbort: true,
-    connectTimeout: 30000
-  }
+    enableArithAbort: true
+  },
+  pool: {
+    max: 10,
+    min: 0,
+    idleTimeoutMillis: 5000
+  },
+  connectionTimeout: 5000,  // 5 segundos
+  requestTimeout: 5000      // 5 segundos
 };
 
 // Crear un pool global
