@@ -8,31 +8,20 @@ const config = {
   port: 1433,
   options: {
     trustServerCertificate: true,
-    encrypt: false,
-    enableArithAbort: true
+    encrypt: false
   },
   pool: {
     max: 10,
     min: 0,
     idleTimeoutMillis: 5000
   },
-  connectionTimeout: 5000,  // 5 segundos
-  requestTimeout: 5000      // 5 segundos
+  connectionTimeout: 5000,
+  requestTimeout: 5000
 };
 
-// Crear un pool global
-let pool = null;
-
-async function getPool() {
-  if (!pool) {
-    pool = await new sql.ConnectionPool(config).connect();
-  }
-  return pool;
-}
-
-async function getProductPrice(itemId) {
+export async function getProductPrice(itemId) {
   try {
-    const pool = await getPool();
+    const pool = await sql.connect(config);
     
     const result = await pool.request()
       .input('itemId', sql.Int, itemId)
@@ -54,10 +43,6 @@ async function getProductPrice(itemId) {
     return null;
   } catch (err) {
     console.error('Error al obtener el precio:', err);
-    return null;
+    throw err;
   }
 }
-
-module.exports = {
-  getProductPrice
-};
