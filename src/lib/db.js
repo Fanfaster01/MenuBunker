@@ -1,23 +1,22 @@
-const sql = require('mssql');
-
 const config = {
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  server: process.env.DB_HOST,
-  database: process.env.DB_NAME,
-  port: 1433,
-  options: {
-    trustServerCertificate: true,
-    encrypt: false
-  },
-  pool: {
-    max: 10,
-    min: 0,
-    idleTimeoutMillis: 5000
-  },
-  connectionTimeout: 5000,
-  requestTimeout: 5000
-};
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    server: process.env.DB_HOST,
+    database: process.env.DB_NAME,
+    port: 1433,
+    options: {
+      trustServerCertificate: true,
+      encrypt: false,
+      enableArithAbort: true
+    },
+    pool: {
+      max: 10,
+      min: 0,
+      idleTimeoutMillis: 30000  // aumentado a 30 segundos
+    },
+    connectionTimeout: 30000,    // aumentado a 30 segundos
+    requestTimeout: 30000        // aumentado a 30 segundos
+  };
 
 export async function getProductPrice(itemId) {
   try {

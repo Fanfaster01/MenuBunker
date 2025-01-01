@@ -15,7 +15,7 @@ export async function GET(request) {
     const price = await Promise.race([
       getProductPrice(itemId),
       new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Database timeout')), 5000)
+        setTimeout(() => reject(new Error('Database timeout')), 30000)
       )
     ]);
     
