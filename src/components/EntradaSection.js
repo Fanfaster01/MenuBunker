@@ -44,7 +44,7 @@ export default function EntradasSection() {
     {
       name: "AREPITAS DE CHICHARRÓN",
       description: "Cuatro (4) und, acompañadas de natilla ó queso guayanés.",
-      id: "6894", 
+      id: "7061", 
       imageUrl: "URL_DE_LA_IMAGEN"
     },
     {

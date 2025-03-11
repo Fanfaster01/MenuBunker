@@ -116,8 +116,8 @@ export default function PrincipalesSection() {
       imageUrl: "URL_DE_LA_IMAGEN"
     },
     {
-      name: "Vegetales gratinados",
-      id: "7114",
+      name: "Tomate Relleno",
+      id: "6896",
       imageUrl: "URL_DE_LA_IMAGEN"
     },
     {
@@ -137,7 +137,7 @@ export default function PrincipalesSection() {
     },
     {
       name: "Papas rústicas con salsa Búnker",
-      id: "7106",
+      id: "7165",
       imageUrl: "URL_DE_LA_IMAGEN"
     },
     {
@@ -153,6 +153,11 @@ export default function PrincipalesSection() {
     {
       name: "Queso a la plancha",
       id: "6442",
+      imageUrl: "URL_DE_LA_IMAGEN"
+    },
+    {
+      name: "Puré de Zanahoria",
+      id: "6639",
       imageUrl: "URL_DE_LA_IMAGEN"
     }
   ];
