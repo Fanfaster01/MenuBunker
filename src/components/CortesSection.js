@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useProductPrices } from '@/hooks/useProductPrices';
 import { Image } from 'lucide-react';
 import Header from './common/Header';
@@ -9,7 +9,6 @@ import ImageModal from './common/ImageModal';
 
 export default function CortesSection() {
   const [selectedImage, setSelectedImage] = useState(null);
-  const [rationPrices, setRationPrices] = useState({});
 
   const cortesItems = [
     {
@@ -100,26 +99,16 @@ export default function CortesSection() {
 
   const { prices, loading, error } = useProductPrices(cortesItems);
 
-  // Calcular precios de las raciones cuando los precios cambian
-  useEffect(() => {
-    if (prices && Object.keys(prices).length > 0) {
-      const newRationPrices = {};
-      
-      cortesItems.forEach(item => {
-        const kiloPrice = prices[item.id];
-        if (kiloPrice) {
-          newRationPrices[item.id] = kiloPrice * item.peso;
-        }
-      });
-      
-      setRationPrices(newRationPrices);
-    }
-  }, [prices, cortesItems]);
-
   // Función para formatear el precio
   const formatPrice = (price) => {
     if (price === undefined || price === null) return "Cargando...";
     return `${price.toFixed(2)}$`;
+  };
+
+  // Función simple para calcular el precio por ración
+  const calculateRationPrice = (kiloPrice, peso) => {
+    if (!kiloPrice) return null;
+    return kiloPrice * peso;
   };
 
   if (loading) {
@@ -163,7 +152,7 @@ export default function CortesSection() {
                     <Image size={20} />
                   </button>
                   <span className="font-bold text-lg text-gray-800">
-                    {formatPrice(rationPrices[item.id])}
+                    {formatPrice(calculateRationPrice(prices[item.id], item.peso))}
                   </span>
                 </div>
               </div>
@@ -182,12 +171,14 @@ export default function CortesSection() {
         </div>
       </div>
 
-      <ImageModal
-        isOpen={!!selectedImage}
-        onClose={() => setSelectedImage(null)}
-        imageUrl={selectedImage?.imageUrl}
-        title={selectedImage?.name}
-      />
+      {selectedImage && (
+        <ImageModal
+          isOpen={!!selectedImage}
+          onClose={() => setSelectedImage(null)}
+          imageUrl={selectedImage.imageUrl}
+          title={selectedImage.name}
+        />
+      )}
 
       <Footer />
     </div>
