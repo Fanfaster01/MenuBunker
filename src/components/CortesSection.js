@@ -171,14 +171,12 @@ export default function CortesSection() {
         </div>
       </div>
 
-      {selectedImage && (
-        <ImageModal
-          isOpen={!!selectedImage}
-          onClose={() => setSelectedImage(null)}
-          imageUrl={selectedImage.imageUrl}
-          title={selectedImage.name}
-        />
-      )}
+      <ImageModal
+        isOpen={!!selectedImage}
+        onClose={() => setSelectedImage(null)}
+        imageUrl={selectedImage?.imageUrl}
+        title={selectedImage?.name}
+      />
 
       <Footer />
     </div>
