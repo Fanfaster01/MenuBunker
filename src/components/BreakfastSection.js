@@ -48,7 +48,7 @@ export default function DesayunosSection() {
     },
     {
       name: "QUESO BLANCO",
-      id: "6603"
+      id: "6633"
     },
     {
       name: "JAMÓN CON QUESO BLANCO",

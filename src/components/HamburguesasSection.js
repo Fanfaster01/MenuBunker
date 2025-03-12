@@ -20,19 +20,13 @@ export default function HamburguesasSection() {
     {
       name: "CHEESE BACON",
       description: "Pan de la casa, 200g de solomo ó pollo al carbón, tocineta, pepinillos, queso cheddar y papas fritas.",
-      id: "6645",
+      id: "7157",
       imageUrl: "URL_DE_LA_IMAGEN"
     },
     {
       name: "POLLO CRISPY",
       description: "Pan de la casa, 200g de pollo empanizado en panko, tomate, lechuga, pepinillos, tocineta, queso cheddar y papas fritas.",
       id: "6544",
-      imageUrl: "URL_DE_LA_IMAGEN"
-    },
-    {
-      name: "PREMIUM",
-      description: "Pan de la casa, 100g de solomo al grill, 100g de costilla de cerdo ahumada BBQ, tocineta, queso amarillo, pepinillos y papas fritas.",
-      id: "6750",
       imageUrl: "URL_DE_LA_IMAGEN"
     }
   ];
