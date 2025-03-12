@@ -99,16 +99,16 @@ export default function CortesSection() {
 
   const { prices, loading, error } = useProductPrices(cortesItems);
 
-  // Función para formatear el precio
-  const formatPrice = (price) => {
-    if (price === undefined || price === null) return "Cargando...";
-    return `${price.toFixed(2)}$`;
+  // Función para calcular el precio por ración
+  const getRationPrice = (itemId, peso) => {
+    const kiloPrice = prices?.[itemId];
+    if (!kiloPrice) return 0;
+    return kiloPrice * peso;
   };
 
-  // Función simple para calcular el precio por ración
-  const calculateRationPrice = (kiloPrice, peso) => {
-    if (!kiloPrice) return null;
-    return kiloPrice * peso;
+  // Función para formatear el precio
+  const formatPrice = (price) => {
+    return `${price.toFixed(2)}$`;
   };
 
   if (loading) {
@@ -152,7 +152,7 @@ export default function CortesSection() {
                     <Image size={20} />
                   </button>
                   <span className="font-bold text-lg text-gray-800">
-                    {formatPrice(calculateRationPrice(prices[item.id], item.peso))}
+                    {formatPrice(getRationPrice(item.id, item.peso))}
                   </span>
                 </div>
               </div>
