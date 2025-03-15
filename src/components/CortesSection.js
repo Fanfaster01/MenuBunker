@@ -87,13 +87,6 @@ export default function CortesSection() {
       id: "6900",
       imageUrl: "URL_DE_LA_IMAGEN",
       peso: 0.3
-    },
-    {
-      name: "ASADO DE TIRA DE RES ANGUS",
-      description: "Raciones de 300g",
-      id: "4084",
-      imageUrl: "URL_DE_LA_IMAGEN",
-      peso: 0.3
     }
   ];
 
