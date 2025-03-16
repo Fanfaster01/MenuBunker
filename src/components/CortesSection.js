@@ -1,15 +1,18 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useProductPrices } from '@/hooks/useProductPrices';
 import { Image } from 'lucide-react';
 import Header from './common/Header';
 import Footer from './common/Footer';
 import ImageModal from './common/ImageModal';
+import ContornosSection from './common/ContornosSection';
 
 export default function CortesSection() {
   const [selectedImage, setSelectedImage] = useState(null);
+  const [rationPrices, setRationPrices] = useState({});
 
+  // Definir cortesItems fuera del renderizado o usar useMemo
   const cortesItems = [
     {
       name: "PUNTA TRASERA ANGUS",
@@ -92,15 +95,25 @@ export default function CortesSection() {
 
   const { prices, loading, error } = useProductPrices(cortesItems);
 
-  // Función para calcular el precio por ración
-  const getRationPrice = (itemId, peso) => {
-    const kiloPrice = prices?.[itemId];
-    if (!kiloPrice) return 0;
-    return kiloPrice * peso;
-  };
+  // Calcular precios de las raciones cuando los precios cambian
+  useEffect(() => {
+    if (prices && Object.keys(prices).length > 0) {
+      const newRationPrices = {};
+      
+      cortesItems.forEach(item => {
+        const kiloPrice = prices[item.id];
+        if (kiloPrice) {
+          newRationPrices[item.id] = kiloPrice * item.peso;
+        }
+      });
+      
+      setRationPrices(newRationPrices);
+    }
+  }, [prices]); // Eliminamos cortesItems de las dependencias
 
   // Función para formatear el precio
   const formatPrice = (price) => {
+    if (price === undefined || price === null) return "Cargando...";
     return `${price.toFixed(2)}$`;
   };
 
@@ -145,7 +158,7 @@ export default function CortesSection() {
                     <Image size={20} />
                   </button>
                   <span className="font-bold text-lg text-gray-800">
-                    {formatPrice(getRationPrice(item.id, item.peso))}
+                    {formatPrice(rationPrices[item.id])}
                   </span>
                 </div>
               </div>
@@ -156,12 +169,15 @@ export default function CortesSection() {
 
         <div className="mt-4 p-4 bg-gray-50 rounded-lg space-y-2">
           <p className="text-gray-600 text-sm text-center font-medium">
-            Todos nuestros cortes se venden por ración
+            Todos nuestros cortes se venden por ración.
           </p>
           <p className="text-gray-600 text-sm text-center">
-            La compra mínima es de una ración de 300g, excepto el Solomo de Res que es de 200g
+            La compra mínima es de una ración de 300g, excepto el Solomo de Res que es de 200g.
           </p>
         </div>
+
+        {/* Contornos Section */}
+        <ContornosSection title="CONTORNOS" />
       </div>
 
       <ImageModal
