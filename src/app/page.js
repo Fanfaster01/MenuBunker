@@ -10,6 +10,7 @@ export default function Home() {
     { name: 'CORTES AL CARBÓN', path: '/cortes' },
     { name: 'HAMBURGUESAS', path: '/hamburguesas' },
     { name: 'ENSALADAS', path: '/ensaladas' },
+    { name: 'BEBIDAS', path: '/bebidas' },
     { name: 'MENÚ INFANTIL', path: '/menu-infantil' }
   ];
 
