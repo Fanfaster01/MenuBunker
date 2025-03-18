@@ -34,29 +34,29 @@ export default function BebidasSection() {
   // Definir elementos por categoría
   const bebidas = {
     cafe: [
-      { name: "ESPRESSO", id: "8101", imageUrl: "URL_DE_LA_IMAGEN" },
-      { name: "AMERICANO", id: "8102", imageUrl: "URL_DE_LA_IMAGEN" },
-      { name: "CAPUCCINO", id: "8103", imageUrl: "URL_DE_LA_IMAGEN" },
-      { name: "LATTE", id: "8104", imageUrl: "URL_DE_LA_IMAGEN" },
-      { name: "LATTE VAINILLA", id: "8105", imageUrl: "URL_DE_LA_IMAGEN" },
-      { name: "MOCACCINO", id: "8106", imageUrl: "URL_DE_LA_IMAGEN" },
-      { name: "MACCHIATO", id: "8107", imageUrl: "URL_DE_LA_IMAGEN" },
-      { name: "LATTE MACCHIATO", id: "8108", imageUrl: "URL_DE_LA_IMAGEN" },
-      { name: "BOMBOM", id: "8109", imageUrl: "URL_DE_LA_IMAGEN" },
-      { name: "TODDY CALIENTE", id: "8110", imageUrl: "URL_DE_LA_IMAGEN" },
-      { name: "INFUSIÓN", id: "8111", imageUrl: "URL_DE_LA_IMAGEN" },
+      { name: "ESPRESSO", id: "2560", imageUrl: "URL_DE_LA_IMAGEN" },
+      { name: "AMERICANO", id: "2561", imageUrl: "URL_DE_LA_IMAGEN" },
+      { name: "CAPUCCINO", id: "2268", imageUrl: "URL_DE_LA_IMAGEN" },
+      { name: "LATTE", id: "2270", imageUrl: "URL_DE_LA_IMAGEN" },
+      { name: "LATTE VAINILLA", id: "2566", imageUrl: "URL_DE_LA_IMAGEN" },
+      { name: "MOCACCINO", id: "2274", imageUrl: "URL_DE_LA_IMAGEN" },
+      { name: "MACCHIATO", id: "2578", imageUrl: "URL_DE_LA_IMAGEN" },
+      { name: "LATTE MACCHIATO", id: "2579", imageUrl: "URL_DE_LA_IMAGEN" },
+      { name: "BOMBOM", id: "1081", imageUrl: "URL_DE_LA_IMAGEN" },
+      { name: "TODDY CALIENTE", id: "2602", imageUrl: "URL_DE_LA_IMAGEN" },
+      { name: "INFUSIÓN", id: "2599", imageUrl: "URL_DE_LA_IMAGEN" },
       { name: "AFOGATO", id: "8112", imageUrl: "URL_DE_LA_IMAGEN" },
     ],
     naturales: [
       { name: "FRUTOS ROJOS", id: "8201", imageUrl: "URL_DE_LA_IMAGEN" },
-      { name: "FRESA", id: "8202", imageUrl: "URL_DE_LA_IMAGEN" },
-      { name: "MELOCOTON", id: "8203", imageUrl: "URL_DE_LA_IMAGEN" },
-      { name: "PIÑA", id: "8204", imageUrl: "URL_DE_LA_IMAGEN" },
-      { name: "MORA", id: "8205", imageUrl: "URL_DE_LA_IMAGEN" },
-      { name: "PARCHITA", id: "8206", imageUrl: "URL_DE_LA_IMAGEN" },
-      { name: "LIMONADA", id: "8207", imageUrl: "URL_DE_LA_IMAGEN" },
-      { name: "LECHOSA", id: "8208", imageUrl: "URL_DE_LA_IMAGEN" },
-      { name: "LIMON-GENGIBRE", id: "8209", imageUrl: "URL_DE_LA_IMAGEN" },
+      { name: "FRESA", id: "1060", imageUrl: "URL_DE_LA_IMAGEN" },
+      { name: "MELOCOTON", id: "2581", imageUrl: "URL_DE_LA_IMAGEN" },
+      { name: "PIÑA", id: "1063", imageUrl: "URL_DE_LA_IMAGEN" },
+      { name: "MORA", id: "1062", imageUrl: "URL_DE_LA_IMAGEN" },
+      { name: "PARCHITA", id: "1061", imageUrl: "URL_DE_LA_IMAGEN" },
+      { name: "LIMONADA", id: "1027", imageUrl: "URL_DE_LA_IMAGEN" },
+      { name: "LECHOSA", id: "2506", imageUrl: "URL_DE_LA_IMAGEN" },
+      { name: "LIMON-GENGIBRE", id: "2587", imageUrl: "URL_DE_LA_IMAGEN" },
     ],
     verdes: [
       { name: "CELERY", description: "Pepino, piña, celery, zumo de limón y cordial de jengibre.", id: "8301", imageUrl: "URL_DE_LA_IMAGEN" },
@@ -65,19 +65,19 @@ export default function BebidasSection() {
       { name: "LECHE", id: "8401", imageUrl: "URL_DE_LA_IMAGEN" },
       { name: "LECHE CONDENSADA", id: "8402", imageUrl: "URL_DE_LA_IMAGEN" },
       { name: "YOGURT", id: "8403", imageUrl: "URL_DE_LA_IMAGEN" },
-      { name: "GRANADINA", id: "8404", imageUrl: "URL_DE_LA_IMAGEN" },
+      { name: "GRANADINA", id: "3807", imageUrl: "URL_DE_LA_IMAGEN" },
       { name: "HIERBABUENA", id: "8405", imageUrl: "URL_DE_LA_IMAGEN" },
     ],
     frappuccinos: [
-      { name: "CARAMELO", id: "8501", imageUrl: "URL_DE_LA_IMAGEN" },
-      { name: "CHOCOLATE", id: "8502", imageUrl: "URL_DE_LA_IMAGEN" },
-      { name: "NUTELLA", id: "8503", imageUrl: "URL_DE_LA_IMAGEN" },
+      { name: "CARAMELO", id: "3915", imageUrl: "URL_DE_LA_IMAGEN" },
+      { name: "CHOCOLATE", id: "3972", imageUrl: "URL_DE_LA_IMAGEN" },
+      { name: "NUTELLA", id: "3916", imageUrl: "URL_DE_LA_IMAGEN" },
     ],
     merengadas: [
-      { name: "MANTECADO", id: "8601", imageUrl: "URL_DE_LA_IMAGEN" },
-      { name: "CHOCOLATE", id: "8602", imageUrl: "URL_DE_LA_IMAGEN" },
+      { name: "MANTECADO", id: "3974", imageUrl: "URL_DE_LA_IMAGEN" },
+      { name: "CHOCOLATE", id: "3976", imageUrl: "URL_DE_LA_IMAGEN" },
       { name: "NUTELLA", id: "8603", imageUrl: "URL_DE_LA_IMAGEN" },
-      { name: "TODDY FRÍO", id: "8604", imageUrl: "URL_DE_LA_IMAGEN" },
+      { name: "TODDY FRÍO", id: "2605", imageUrl: "URL_DE_LA_IMAGEN" },
       { name: "LIMONADA DE COCO", id: "8605", imageUrl: "URL_DE_LA_IMAGEN" },
       { name: "PIE DE LIMÓN", id: "8606", imageUrl: "URL_DE_LA_IMAGEN" },
     ],
@@ -85,60 +85,60 @@ export default function BebidasSection() {
       { 
         name: "MOCKTAIL DE JAMAICA", 
         description: "Cordial de jamaica, zumo de limón o parchita y soda.", 
-        id: "8701", 
+        id: "1094", 
         imageUrl: "URL_DE_LA_IMAGEN" 
       },
       { 
         name: "FRUTOS ROJOS", 
         description: "Cordial de frutos rojos, té de jamaica y zumo de limón.", 
-        id: "8702", 
+        id: "2592", 
         imageUrl: "URL_DE_LA_IMAGEN" 
       },
       { 
         name: "MOCKTAIL DE KIWI", 
         description: "Cordial de kiwi, zumo de parchita y soda.", 
-        id: "8703", 
+        id: "1094", 
         imageUrl: "URL_DE_LA_IMAGEN" 
       },
       { 
         name: "BÚNKER", 
         description: "Té verde, cordial de kiwi, jarabe de jengibre y zumo de limón.", 
-        id: "8704", 
+        id: "17", 
         imageUrl: "URL_DE_LA_IMAGEN" 
       },
       { 
         name: "MOCKTAIL DE NARANJA", 
         description: "Zumo de naranja, sour de parchita y soda.", 
-        id: "8705", 
+        id: "1094", 
         imageUrl: "URL_DE_LA_IMAGEN" 
       },
     ],
     cocteles: [
-      { name: "PIÑA COLADA", id: "9101", imageUrl: "URL_DE_LA_IMAGEN" },
-      { name: "MOJITO", id: "9102", imageUrl: "URL_DE_LA_IMAGEN" },
-      { name: "MARGARITA", id: "9103", imageUrl: "URL_DE_LA_IMAGEN" },
-      { name: "DAIQUIRI", id: "9104", imageUrl: "URL_DE_LA_IMAGEN" },
-      { name: "GIN TONIC", id: "9105", imageUrl: "URL_DE_LA_IMAGEN" },
+      { name: "PIÑA COLADA", id: "2318", imageUrl: "URL_DE_LA_IMAGEN" },
+      { name: "MOJITO", id: "3960", imageUrl: "URL_DE_LA_IMAGEN" },
+      { name: "MARGARITA", id: "3958", imageUrl: "URL_DE_LA_IMAGEN" },
+      { name: "DAIQUIRI", id: "3979", imageUrl: "URL_DE_LA_IMAGEN" },
+      { name: "GIN TONIC", id: "18", imageUrl: "URL_DE_LA_IMAGEN" },
       { name: "MOSCOW MULE", id: "9106", imageUrl: "URL_DE_LA_IMAGEN" },
       { name: "TINTO DE VERANO", id: "9107", imageUrl: "URL_DE_LA_IMAGEN" },
-      { name: "MIMOSA", id: "9108", imageUrl: "URL_DE_LA_IMAGEN" },
-      { name: "CUBA LIBRE", id: "9109", imageUrl: "URL_DE_LA_IMAGEN" },
-      { name: "MANHATTAN", id: "9110", imageUrl: "URL_DE_LA_IMAGEN" },
+      { name: "MIMOSA", id: "3635", imageUrl: "URL_DE_LA_IMAGEN" },
+      { name: "CUBA LIBRE", id: "2358", imageUrl: "URL_DE_LA_IMAGEN" },
+      { name: "MANHATTAN", id: "3994", imageUrl: "URL_DE_LA_IMAGEN" },
       { name: "APEROL NEGRONI", id: "9111", imageUrl: "URL_DE_LA_IMAGEN" },
-      { name: "NEGRONI", id: "9112", imageUrl: "URL_DE_LA_IMAGEN" },
-      { name: "DRY MARTINI", id: "9113", imageUrl: "URL_DE_LA_IMAGEN" },
+      { name: "NEGRONI", id: "3996", imageUrl: "URL_DE_LA_IMAGEN" },
+      { name: "DRY MARTINI", id: "3993", imageUrl: "URL_DE_LA_IMAGEN" },
     ],
     autor: [
       { 
         name: "BÚNKER", 
         description: "Ron ST 1796, cordial de jamaica, zumo de naranja y zumo de piña.", 
-        id: "9201", 
+        id: "17", 
         imageUrl: "URL_DE_LA_IMAGEN" 
       },
       { 
         name: "APEROL DE LA CASA", 
         description: "Aperol, zumo de piña, oleo de naranja, prosecco Poggio y soda.", 
-        id: "9202", 
+        id: "21", 
         imageUrl: "URL_DE_LA_IMAGEN" 
       },
       { 
@@ -167,28 +167,28 @@ export default function BebidasSection() {
       },
     ],
     cervezas: [
-      { name: "POLAR LIGHT 220ML", id: "9301", imageUrl: "URL_DE_LA_IMAGEN" },
-      { name: "POLAR PILSEN 220ML", id: "9302", imageUrl: "URL_DE_LA_IMAGEN" },
-      { name: "SOLERA AZUL 220ML", id: "9303", imageUrl: "URL_DE_LA_IMAGEN" },
-      { name: "SOLERA VERDE 220ML", id: "9304", imageUrl: "URL_DE_LA_IMAGEN" },
-      { name: "ZULIA 220ML", id: "9305", imageUrl: "URL_DE_LA_IMAGEN" },
+      { name: "POLAR LIGHT 220ML", id: "33", imageUrl: "URL_DE_LA_IMAGEN" },
+      { name: "POLAR PILSEN 220ML", id: "32", imageUrl: "URL_DE_LA_IMAGEN" },
+      { name: "SOLERA AZUL 220ML", id: "28", imageUrl: "URL_DE_LA_IMAGEN" },
+      { name: "SOLERA VERDE 220ML", id: "30", imageUrl: "URL_DE_LA_IMAGEN" },
+      { name: "ZULIA 220ML", id: "1135", imageUrl: "URL_DE_LA_IMAGEN" },
       { name: "IMPORTADA UND", id: "9306", imageUrl: "URL_DE_LA_IMAGEN" },
     ],
     licores: [
       { name: "FRANGELICO", id: "9401", imageUrl: "URL_DE_LA_IMAGEN" },
-      { name: "COINTREAU", id: "9402", imageUrl: "URL_DE_LA_IMAGEN" },
-      { name: "LIMONCELLO", id: "9403", imageUrl: "URL_DE_LA_IMAGEN" },
-      { name: "BAILEYS", id: "9404", imageUrl: "URL_DE_LA_IMAGEN" },
+      { name: "COINTREAU", id: "2321", imageUrl: "URL_DE_LA_IMAGEN" },
+      { name: "LIMONCELLO", id: "2320", imageUrl: "URL_DE_LA_IMAGEN" },
+      { name: "BAILEYS", id: "1178", imageUrl: "URL_DE_LA_IMAGEN" },
       { name: "JAGERMEISTER", id: "9405", imageUrl: "URL_DE_LA_IMAGEN" },
-      { name: "AMARETTO", id: "9406", imageUrl: "URL_DE_LA_IMAGEN" },
+      { name: "AMARETTO", id: "3688", imageUrl: "URL_DE_LA_IMAGEN" },
       { name: "SAMBUCA", id: "9407", imageUrl: "URL_DE_LA_IMAGEN" },
     ],
     whisky: [
       { 
         name: "OLD PARR 12 AÑOS", 
         options: [
-          { type: "Trago", id: "9501T" },
-          { type: "Servicio", id: "9501S", description: "Botella 0.75L" }
+          { type: "Trago", id: "1067" },
+          { type: "Servicio", id: "1055", description: "Botella 0.75L" }
         ],
         imageUrl: "URL_DE_LA_IMAGEN" 
       },
@@ -203,16 +203,16 @@ export default function BebidasSection() {
       { 
         name: "BUCHANANS 12 AÑOS", 
         options: [
-          { type: "Trago", id: "9503T" },
-          { type: "Servicio", id: "9503S", description: "Botella 0.75L" }
+          { type: "Trago", id: "4008" },
+          { type: "Servicio", id: "1056", description: "Botella 0.75L" }
         ],
         imageUrl: "URL_DE_LA_IMAGEN" 
       },
       { 
         name: "BUCHANANS 18 AÑOS", 
         options: [
-          { type: "Trago", id: "9504T" },
-          { type: "Servicio", id: "9504S", description: "Botella 0.75L" }
+          { type: "Trago", id: "1068" },
+          { type: "Servicio", id: "1057", description: "Botella 0.75L" }
         ],
         imageUrl: "URL_DE_LA_IMAGEN" 
       },
@@ -245,40 +245,40 @@ export default function BebidasSection() {
       { 
         name: "ST 1796", 
         options: [
-          { type: "Trago", id: "9602T" },
-          { type: "Servicio", id: "9602S", description: "Botella 0.75L" }
+          { type: "Trago", id: "1140" },
+          { type: "Servicio", id: "2352", description: "Botella 0.75L" }
         ],
         imageUrl: "URL_DE_LA_IMAGEN" 
       },
       { 
         name: "ST LINAJE", 
         options: [
-          { type: "Trago", id: "9603T" },
-          { type: "Servicio", id: "9603S", description: "Botella 0.7L" }
+          { type: "Trago", id: "3998" },
+          { type: "Servicio", id: "1054", description: "Botella 0.7L" }
         ],
         imageUrl: "URL_DE_LA_IMAGEN" 
       },
       { 
         name: "ST GRAN RESERVA", 
         options: [
-          { type: "Trago", id: "9604T" },
-          { type: "Servicio", id: "9604S", description: "Botella 0.7L" }
+          { type: "Trago", id: "1089" },
+          { type: "Servicio", id: "2314", description: "Botella 0.7L" }
         ],
         imageUrl: "URL_DE_LA_IMAGEN" 
       },
       { 
         name: "ROBLE EXTRA AÑEJO", 
         options: [
-          { type: "Trago", id: "9605T" },
-          { type: "Servicio", id: "9605S", description: "Botella 0.7L" }
+          { type: "Trago", id: "3999" },
+          { type: "Servicio", id: "1198", description: "Botella 0.7L" }
         ],
         imageUrl: "URL_DE_LA_IMAGEN" 
       },
       { 
         name: "ROBLE ULTRA AÑEJO", 
         options: [
-          { type: "Trago", id: "9606T" },
-          { type: "Servicio", id: "9606S", description: "Botella 0.7L" }
+          { type: "Trago", id: "4000" },
+          { type: "Servicio", id: "1197", description: "Botella 0.7L" }
         ],
         imageUrl: "URL_DE_LA_IMAGEN" 
       },
@@ -287,16 +287,16 @@ export default function BebidasSection() {
       { 
         name: "GREY GOOSE", 
         options: [
-          { type: "Trago", id: "9701T" },
-          { type: "Servicio", id: "9701S", description: "Botella 1L" }
+          { type: "Trago", id: "2283" },
+          { type: "Servicio", id: "1191", description: "Botella 1L" }
         ],
         imageUrl: "URL_DE_LA_IMAGEN" 
       },
       { 
         name: "STOLICHNAYA", 
         options: [
-          { type: "Trago", id: "9702T" },
-          { type: "Servicio", id: "9702S", description: "Botella 0.75L" }
+          { type: "Trago", id: "3921" },
+          { type: "Servicio", id: "1192", description: "Botella 0.75L" }
         ],
         imageUrl: "URL_DE_LA_IMAGEN" 
       },
@@ -304,7 +304,7 @@ export default function BebidasSection() {
         name: "ROBERTO CAVALLI", 
         options: [
           { type: "Trago", id: "9703T" },
-          { type: "Servicio", id: "9703S", description: "Botella 1L" }
+          { type: "Servicio", id: "1169", description: "Botella 1L" }
         ],
         imageUrl: "URL_DE_LA_IMAGEN" 
       },
@@ -312,7 +312,7 @@ export default function BebidasSection() {
         name: "ABSOLUT ORIGINAL", 
         options: [
           { type: "Trago", id: "9704T" },
-          { type: "Servicio", id: "9704S", description: "Botella 1L" }
+          { type: "Servicio", id: "1208", description: "Botella 1L" }
         ],
         imageUrl: "URL_DE_LA_IMAGEN" 
       },
@@ -321,8 +321,8 @@ export default function BebidasSection() {
       { 
         name: "BOMBAY SAPPHIRE", 
         options: [
-          { type: "Trago", id: "9801T" },
-          { type: "Servicio", id: "9801S", description: "Botella 1L" }
+          { type: "Trago", id: "2287" },
+          { type: "Servicio", id: "1195", description: "Botella 1L" }
         ],
         imageUrl: "URL_DE_LA_IMAGEN" 
       },
@@ -330,7 +330,7 @@ export default function BebidasSection() {
         name: "THE LONDON N° 1", 
         options: [
           { type: "Trago", id: "9802T" },
-          { type: "Servicio", id: "9802S", description: "Botella 1L" }
+          { type: "Servicio", id: "1194", description: "Botella 1L" }
         ],
         imageUrl: "URL_DE_LA_IMAGEN" 
       },
@@ -347,8 +347,8 @@ export default function BebidasSection() {
       { 
         name: "JOSE CUERVO REPOSADO", 
         options: [
-          { type: "Trago", id: "9901T" },
-          { type: "Servicio", id: "9901S", description: "Botella 0.75L" }
+          { type: "Trago", id: "2357" },
+          { type: "Servicio", id: "2356", description: "Botella 0.75L" }
         ],
         imageUrl: "URL_DE_LA_IMAGEN" 
       },
