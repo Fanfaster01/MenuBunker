@@ -77,7 +77,7 @@ export default function DesayunosSection() {
   const error = desayunoError || empanadaError;
 
   const formatPrice = (price) => {
-    return `${price?.toFixed(2)}$`;
+    return `${price?.toFixed(2)}€`;
   };
 
   if (loading) {

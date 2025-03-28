@@ -374,7 +374,7 @@ export default function BebidasSection() {
   // Formatear el precio
   const formatPrice = (price) => {
     if (price === undefined || price === null) return "Cargando...";
-    return `${price.toFixed(2)}$`;
+    return `${price.toFixed(2)}€`;
   };
 
   if (loading) {

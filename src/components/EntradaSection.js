@@ -76,7 +76,7 @@ export default function EntradasSection() {
   const { prices, loading, error } = useProductPrices(entradaItems);
 
   const formatPrice = (price) => {
-    return `${price?.toFixed(2)}$`;
+    return `${price?.toFixed(2)}€`;
   };
 
   if (loading) {

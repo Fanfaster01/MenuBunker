@@ -34,7 +34,7 @@ export default function HamburguesasSection() {
   const { prices, loading, error } = useProductPrices(hamburguesas);
 
   const formatPrice = (price) => {
-    return `${price?.toFixed(2)}$`;
+    return `${price?.toFixed(2)}€`;
   };
 
   if (loading) {

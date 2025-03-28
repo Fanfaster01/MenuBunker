@@ -67,7 +67,7 @@ const loading = ensaladaLoading || proteinaLoading;
 const error = ensaladaError || proteinaError;
 
 const formatPrice = (price) => {
-  return `${price?.toFixed(2)}$`;
+  return `${price?.toFixed(2)}€`;
 };
 
 if (loading) {
