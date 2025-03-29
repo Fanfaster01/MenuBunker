@@ -168,11 +168,11 @@ export default function CortesSection() {
         </div>
 
         <div className="mt-4 p-4 bg-gray-50 rounded-lg space-y-2">
-          <p className="text-gray-600 text-sm text-center font-medium">
-            Todos nuestros cortes se venden por ración.
-          </p>
           <p className="text-gray-600 text-sm text-center">
             La compra mínima es de una ración de 300g, excepto el Solomo de Res que es de 200g.
+          </p>
+          <p className="text-black text-sm text-center">
+          Todos nuestros cortes se pesan en crudo.
           </p>
         </div>
 
