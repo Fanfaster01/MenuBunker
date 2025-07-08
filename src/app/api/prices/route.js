@@ -41,11 +41,21 @@ export async function GET(request) {
     });
   } catch (error) {
     console.error('Database error:', error);
+    console.error('Environment debug:', {
+      hasUser: !!process.env.DB_USER,
+      hasPassword: !!process.env.DB_PASSWORD,
+      hasHost: !!process.env.DB_HOST,
+      hasName: !!process.env.DB_NAME,
+      port: process.env.DB_PORT,
+      vercelEnv: process.env.VERCEL_ENV,
+      nodeEnv: process.env.NODE_ENV
+    });
     
     // No exponer detalles del error en producción
     const isProduction = process.env.NODE_ENV === 'production';
     const errorResponse = {
       error: 'Database connection error',
+      env: process.env.VERCEL_ENV || 'unknown',
       ...((!isProduction) && { details: error.message })
     };
     
