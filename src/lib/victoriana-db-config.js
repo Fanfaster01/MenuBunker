@@ -10,7 +10,7 @@ export function getVictorianaDBConfig() {
     port: parseInt(process.env.VICTORIANA_DB_PORT || '14333'),
     options: {
       // Por defecto, confiar en certificados auto-firmados
-      trustServerCertificate: process.env.VICTORIANA_DB_TRUST_SERVER_CERTIFICATE !== 'false',
+      trustServerCertificate: process.env.VICTORIANA_DB_TRUST_SERVER_CERTIFICATE !== 'true',
       // Por defecto, no encriptar (común en servidores locales/desarrollo)
       encrypt: process.env.VICTORIANA_DB_ENCRYPT === 'true',
       enableArithAbort: true

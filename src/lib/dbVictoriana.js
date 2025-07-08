@@ -7,7 +7,7 @@ const config = {
     database: process.env.VICTORIANA_DB_NAME,
     port: parseInt(process.env.VICTORIANA_DB_PORT || '1433'),
     options: {
-      trustServerCertificate: process.env.VICTORIANA_DB_TRUST_SERVER_CERTIFICATE !== 'false',
+      trustServerCertificate: process.env.VICTORIANA_DB_TRUST_SERVER_CERTIFICATE !== 'true',
       encrypt: process.env.VICTORIANA_DB_ENCRYPT === 'true',
       enableArithAbort: true
     },
