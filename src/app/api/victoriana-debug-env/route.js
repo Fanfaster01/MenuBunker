@@ -15,8 +15,8 @@ export async function GET() {
   return new Response(JSON.stringify({
     environment: config,
     parsed_port: parseInt(process.env.VICTORIANA_DB_PORT || '14333'),
-    trust_cert_boolean: process.env.VICTORIANA_DB_TRUST_SERVER_CERTIFICATE !== 'false',
-    encrypt_boolean: process.env.VICTORIANA_DB_ENCRYPT === 'true'
+    trust_cert_boolean: process.env.VICTORIANA_DB_TRUST_SERVER_CERTIFICATE !== 'false' && process.env.VICTORIANA_DB_TRUST_CERT !== 'false',
+    encrypt_boolean: process.env.VICTORIANA_DB_ENCRYPT === 'true' || (process.env.VICTORIANA_DB_ENCRYPT !== 'false' && process.env.VICTORIANA_DB_ENCRYPT !== 'not_set')
   }, null, 2), {
     status: 200,
     headers: { 'Content-Type': 'application/json' }
