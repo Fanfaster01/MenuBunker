@@ -11,7 +11,7 @@ export async function GET() {
       database: process.env.DB_NAME,
       port: parseInt(process.env.DB_PORT || '1433'),
       options: {
-        trustServerCertificate: process.env.DB_TRUST_SERVER_CERTIFICATE === 'true' || process.env.DB_TRUST_CERT === 'true',
+        trustServerCertificate: process.env.DB_TRUST_SERVER_CERTIFICATE !== 'false' && process.env.DB_TRUST_CERT !== 'false',
         encrypt: process.env.DB_ENCRYPT === 'true' || (process.env.DB_ENCRYPT !== 'false' && process.env.DB_ENCRYPT !== 'not_set'),
         enableArithAbort: true
       },
@@ -62,7 +62,7 @@ export async function GET() {
         server: process.env.DB_HOST,
         database: process.env.DB_NAME,
         port: process.env.DB_PORT,
-        trustServerCertificate: process.env.DB_TRUST_SERVER_CERTIFICATE === 'true' || process.env.DB_TRUST_CERT === 'true',
+        trustServerCertificate: process.env.DB_TRUST_SERVER_CERTIFICATE !== 'false' && process.env.DB_TRUST_CERT !== 'false',
         encrypt: process.env.DB_ENCRYPT === 'true' || (process.env.DB_ENCRYPT !== 'false' && process.env.DB_ENCRYPT !== 'not_set'),
         hasUser: !!process.env.DB_USER,
         hasPassword: !!process.env.DB_PASSWORD
