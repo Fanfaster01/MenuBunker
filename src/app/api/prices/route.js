@@ -11,9 +11,18 @@ export async function GET(request) {
     });
   }
 
+  // Validar que itemId sea un número válido
+  const parsedItemId = parseInt(itemId);
+  if (isNaN(parsedItemId) || parsedItemId <= 0) {
+    return new Response(JSON.stringify({ error: 'Invalid Item ID format' }), {
+      status: 400,
+      headers: { 'Content-Type': 'application/json' }
+    });
+  }
+
   try {
     const price = await Promise.race([
-      getProductPrice(itemId),
+      getProductPrice(parsedItemId),
       new Promise((_, reject) => 
         setTimeout(() => reject(new Error('Database timeout')), 30000)
       )
@@ -32,10 +41,15 @@ export async function GET(request) {
     });
   } catch (error) {
     console.error('Database error:', error);
-    return new Response(JSON.stringify({ 
+    
+    // No exponer detalles del error en producción
+    const isProduction = process.env.NODE_ENV === 'production';
+    const errorResponse = {
       error: 'Database connection error',
-      details: error.message 
-    }), {
+      ...((!isProduction) && { details: error.message })
+    };
+    
+    return new Response(JSON.stringify(errorResponse), {
       status: 503,
       headers: { 'Content-Type': 'application/json' }
     });

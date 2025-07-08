@@ -5,19 +5,19 @@ const config = {
     password: process.env.DB_PASSWORD,
     server: process.env.DB_HOST,
     database: process.env.DB_NAME,
-    port: 1433,
+    port: parseInt(process.env.DB_PORT || '1433'),
     options: {
-      trustServerCertificate: true,
-      encrypt: false,
+      trustServerCertificate: process.env.DB_TRUST_SERVER_CERTIFICATE === 'true',
+      encrypt: process.env.DB_ENCRYPT !== 'false',
       enableArithAbort: true
     },
     pool: {
       max: 10,
       min: 0,
-      idleTimeoutMillis: 30000  // aumentado a 30 segundos
+      idleTimeoutMillis: 30000
     },
-    connectionTimeout: 30000,    // aumentado a 30 segundos
-    requestTimeout: 30000        // aumentado a 30 segundos
+    connectionTimeout: 30000,
+    requestTimeout: 30000
   };
 
 export async function getProductPrice(itemId) {

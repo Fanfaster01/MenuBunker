@@ -2,36 +2,65 @@
 
 import { useState } from 'react';
 import { useProductPrices } from '@/hooks/useProductPrices';
-import { Image } from 'lucide-react';
+import { Image, Coffee, Droplets, Wine, Beer } from 'lucide-react';
 import Header from './common/Header';
 import Footer from './common/Footer';
 import ImageModal from './common/ImageModal';
 
 export default function BebidasSection() {
   const [selectedImage, setSelectedImage] = useState(null);
+  const [activeGroup, setActiveGroup] = useState('calientes');
   const [activeCategory, setActiveCategory] = useState('cafe');
   const [showExtras, setShowExtras] = useState(false);
 
-  // Definir categorías de bebidas
-  const categories = [
-    { id: 'cafe', name: 'CAFÉ / BEBIDAS CALIENTES' },
-    { id: 'naturales', name: 'NATURALES' },
-    { id: 'verdes', name: 'VERDES' },
-    { id: 'frappuccinos', name: 'FRAPPUCCINOS' },
-    { id: 'merengadas', name: 'MERENGADAS' },
-    { id: 'infusiones', name: 'INFUSIONES FRÍAS' },
-    { id: 'cocteles', name: 'COCTELES' },
-    { id: 'autor', name: 'COCTELES DE AUTOR' },
-    { id: 'cervezas', name: 'CERVEZAS' },
-    { id: 'licores', name: 'LICORES' },
-    { id: 'whisky', name: 'WHISKY' },
-    { id: 'ron', name: 'RON' },
-    { id: 'vodka', name: 'VODKA' },
-    { id: 'ginebra', name: 'GINEBRA' },
-    { id: 'tequila', name: 'TEQUILA' },
+  // Agrupar categorías en grupos principales
+  const groups = [
+    {
+      id: 'calientes',
+      name: 'CALIENTES',
+      icon: Coffee,
+      categories: [
+        { id: 'cafe', name: 'CAFÉ Y TÉ' }
+      ]
+    },
+    {
+      id: 'frias',
+      name: 'FRÍAS',
+      icon: Droplets,
+      categories: [
+        { id: 'naturales', name: 'NATURALES' },
+        { id: 'verdes', name: 'VERDES' },
+        { id: 'frappuccinos', name: 'FRAPPÉS' },
+        { id: 'merengadas', name: 'BATIDOS' },
+        { id: 'infusiones', name: 'INFUSIONES' }
+      ]
+    },
+    {
+      id: 'alcoholicas',
+      name: 'COCTELES',
+      icon: Wine,
+      categories: [
+        { id: 'cocteles', name: 'CLÁSICOS' },
+        { id: 'autor', name: 'DE AUTOR' }
+      ]
+    },
+    {
+      id: 'licores',
+      name: 'LICORES',
+      icon: Beer,
+      categories: [
+        { id: 'cervezas', name: 'CERVEZAS' },
+        { id: 'whisky', name: 'WHISKY' },
+        { id: 'ron', name: 'RON' },
+        { id: 'vodka', name: 'VODKA' },
+        { id: 'ginebra', name: 'GINEBRA' },
+        { id: 'tequila', name: 'TEQUILA' },
+        { id: 'licores', name: 'OTROS' }
+      ]
+    }
   ];
 
-  // Definir elementos por categoría
+  // Bebidas organizadas por categoría
   const bebidas = {
     cafe: [
       { name: "ESPRESSO", id: "6728", imageUrl: "URL_DE_LA_IMAGEN" },
@@ -50,13 +79,13 @@ export default function BebidasSection() {
     naturales: [
       { name: "FRUTOS ROJOS", id: "6674", imageUrl: "URL_DE_LA_IMAGEN" },
       { name: "FRESA", id: "1060", imageUrl: "URL_DE_LA_IMAGEN" },
-      { name: "MELOCOTON", id: "2581", imageUrl: "URL_DE_LA_IMAGEN" },
+      { name: "MELOCOTÓN", id: "2581", imageUrl: "URL_DE_LA_IMAGEN" },
       { name: "PIÑA", id: "7095", imageUrl: "URL_DE_LA_IMAGEN" },
       { name: "MORA", id: "1062", imageUrl: "URL_DE_LA_IMAGEN" },
       { name: "PARCHITA", id: "1061", imageUrl: "URL_DE_LA_IMAGEN" },
       { name: "LIMONADA", id: "1027", imageUrl: "URL_DE_LA_IMAGEN" },
       { name: "LECHOSA", id: "2506", imageUrl: "URL_DE_LA_IMAGEN" },
-      { name: "LIMON-GENGIBRE", id: "6675", imageUrl: "URL_DE_LA_IMAGEN" },
+      { name: "LIMÓN-JENGIBRE", id: "6675", imageUrl: "URL_DE_LA_IMAGEN" },
     ],
     verdes: [
       { name: "CELERY", description: "Pepino, piña, celery, zumo de limón y cordial de jengibre.", id: "6682", imageUrl: "URL_DE_LA_IMAGEN" },
@@ -186,14 +215,14 @@ export default function BebidasSection() {
         name: "OLD PARR 12 AÑOS", 
         options: [
           { type: "Trago", id: "6810" },
-          { type: "Servicio", id: "6777", description: "Botella 0.75L" }
+          { type: "Botella", id: "6777", description: "0.75L" }
         ],
         imageUrl: "URL_DE_LA_IMAGEN" 
       },
       { 
         name: "OLD PARR SILVER", 
         options: [
-          { type: "Servicio", id: "9502S", description: "Botella 0.75L" }
+          { type: "Botella", id: "9502S", description: "0.75L" }
         ],
         imageUrl: "URL_DE_LA_IMAGEN" 
       },
@@ -201,21 +230,21 @@ export default function BebidasSection() {
         name: "BUCHANANS 12 AÑOS", 
         options: [
           { type: "Trago", id: "6811" },
-          { type: "Servicio", id: "6778", description: "Botella 0.75L" }
+          { type: "Botella", id: "6778", description: "0.75L" }
         ],
         imageUrl: "URL_DE_LA_IMAGEN" 
       },
       { 
         name: "BUCHANANS 18 AÑOS", 
         options: [
-          { type: "Servicio", id: "6779", description: "Botella 0.75L" }
+          { type: "Botella", id: "6779", description: "0.75L" }
         ],
         imageUrl: "URL_DE_LA_IMAGEN" 
       },
       { 
         name: "ROYAL SALUTE", 
         options: [
-          { type: "Servicio", id: "6780", description: "Botella 0.75L" }
+          { type: "Botella", id: "6780", description: "0.75L" }
         ],
         imageUrl: "URL_DE_LA_IMAGEN" 
       },
@@ -223,7 +252,7 @@ export default function BebidasSection() {
         name: "BLACK LABEL 12 AÑOS", 
         options: [
           { type: "Trago", id: "9506T" },
-          { type: "Servicio", id: "9506S", description: "Botella 0.75L" }
+          { type: "Botella", id: "9506S", description: "0.75L" }
         ],
         imageUrl: "URL_DE_LA_IMAGEN" 
       },
@@ -232,7 +261,7 @@ export default function BebidasSection() {
       { 
         name: "PLANAS DIPLOMÁTICO", 
         options: [
-          { type: "Servicio", id: "", description: "Botella 0.75L" }
+          { type: "Botella", id: "", description: "0.75L" }
         ],
         imageUrl: "URL_DE_LA_IMAGEN" 
       },
@@ -240,7 +269,7 @@ export default function BebidasSection() {
         name: "ST 1796", 
         options: [
           { type: "Trago", id: "6805" },
-          { type: "Servicio", id: "6771", description: "Botella 0.75L" }
+          { type: "Botella", id: "6771", description: "0.75L" }
         ],
         imageUrl: "URL_DE_LA_IMAGEN" 
       },
@@ -248,7 +277,7 @@ export default function BebidasSection() {
         name: "ST LINAJE", 
         options: [
           { type: "Trago", id: "6806" },
-          { type: "Servicio", id: "6772", description: "Botella 0.7L" }
+          { type: "Botella", id: "6772", description: "0.7L" }
         ],
         imageUrl: "URL_DE_LA_IMAGEN" 
       },
@@ -256,7 +285,7 @@ export default function BebidasSection() {
         name: "ST GRAN RESERVA", 
         options: [
           { type: "Trago", id: "6807" },
-          { type: "Servicio", id: "6773", description: "Botella 0.7L" }
+          { type: "Botella", id: "6773", description: "0.7L" }
         ],
         imageUrl: "URL_DE_LA_IMAGEN" 
       },
@@ -264,7 +293,7 @@ export default function BebidasSection() {
         name: "ROBLE EXTRA AÑEJO", 
         options: [
           { type: "Trago", id: "6808" },
-          { type: "Servicio", id: "6774", description: "Botella 0.7L" }
+          { type: "Botella", id: "6774", description: "0.7L" }
         ],
         imageUrl: "URL_DE_LA_IMAGEN" 
       },
@@ -272,7 +301,7 @@ export default function BebidasSection() {
         name: "ROBLE ULTRA AÑEJO", 
         options: [
           { type: "Trago", id: "6809" },
-          { type: "Servicio", id: "6775", description: "Botella 0.7L" }
+          { type: "Botella", id: "6775", description: "0.7L" }
         ],
         imageUrl: "URL_DE_LA_IMAGEN" 
       },
@@ -282,7 +311,7 @@ export default function BebidasSection() {
         name: "GREY GOOSE", 
         options: [
           { type: "Trago", id: "6812" },
-          { type: "Servicio", id: "6781", description: "Botella 1L" }
+          { type: "Botella", id: "6781", description: "1L" }
         ],
         imageUrl: "URL_DE_LA_IMAGEN" 
       },
@@ -290,14 +319,14 @@ export default function BebidasSection() {
         name: "STOLICHNAYA", 
         options: [
           { type: "Trago", id: "6813" },
-          { type: "Servicio", id: "6782", description: "Botella 0.75L" }
+          { type: "Botella", id: "6782", description: "0.75L" }
         ],
         imageUrl: "URL_DE_LA_IMAGEN" 
       },
       { 
         name: "ROBERTO CAVALLI", 
         options: [
-          { type: "Servicio", id: "6783", description: "Botella 1L" }
+          { type: "Botella", id: "6783", description: "1L" }
         ],
         imageUrl: "URL_DE_LA_IMAGEN" 
       },
@@ -305,7 +334,7 @@ export default function BebidasSection() {
         name: "ABSOLUT ORIGINAL", 
         options: [
           { type: "Trago", id: "6814" },
-          { type: "Servicio", id: "6784", description: "Botella 1L" }
+          { type: "Botella", id: "6784", description: "1L" }
         ],
         imageUrl: "URL_DE_LA_IMAGEN" 
       },
@@ -315,7 +344,7 @@ export default function BebidasSection() {
         name: "BOMBAY SAPPHIRE", 
         options: [
           { type: "Trago", id: "6815" },
-          { type: "Servicio", id: "6785", description: "Botella 1L" }
+          { type: "Botella", id: "6785", description: "1L" }
         ],
         imageUrl: "URL_DE_LA_IMAGEN" 
       },
@@ -323,7 +352,7 @@ export default function BebidasSection() {
         name: "THE LONDON N° 1", 
         options: [
           { type: "Trago", id: "6817" },
-          { type: "Servicio", id: "6787", description: "Botella 1L" }
+          { type: "Botella", id: "6787", description: "1L" }
         ],
         imageUrl: "URL_DE_LA_IMAGEN" 
       },
@@ -331,7 +360,7 @@ export default function BebidasSection() {
         name: "HENDRICK'S", 
         options: [
           { type: "Trago", id: "6818" },
-          { type: "Servicio", id: "6788", description: "Botella 0.70L" }
+          { type: "Botella", id: "6788", description: "0.70L" }
         ],
         imageUrl: "URL_DE_LA_IMAGEN" 
       },
@@ -341,7 +370,7 @@ export default function BebidasSection() {
         name: "JOSE CUERVO REPOSADO", 
         options: [
           { type: "Trago", id: "6819" },
-          { type: "Servicio", id: "6789", description: "Botella 0.75L" }
+          { type: "Botella", id: "6789", description: "0.75L" }
         ],
         imageUrl: "URL_DE_LA_IMAGEN" 
       },
@@ -377,6 +406,9 @@ export default function BebidasSection() {
     return `${price.toFixed(2)}€`;
   };
 
+  // Encontrar el grupo actual
+  const currentGroup = groups.find(group => group.id === activeGroup);
+
   if (loading) {
     return (
       <div className="min-h-screen bg-white text-gray-900 p-4">
@@ -401,40 +433,64 @@ export default function BebidasSection() {
     <div className="min-h-screen bg-white text-gray-900 p-4">
       <Header title="BEBIDAS" />
 
-      {/* Menú de categorías */}
-      <div className="mb-6 overflow-x-auto">
-        <div className="flex space-x-4 pb-2 min-w-max">
-          {categories.map((category) => (
-            <button
-              key={category.id}
-              className={`px-3 py-2 rounded-lg text-sm font-medium whitespace-nowrap ${
-                activeCategory === category.id
-                  ? "bg-amber-100 text-amber-800 border border-amber-300"
-                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-              }`}
-              onClick={() => {
-                setActiveCategory(category.id);
-                if (!(category.id === 'naturales' || category.id === 'verdes')) {
+      {/* Grupos principales */}
+      <div className="mb-6">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          {groups.map((group) => {
+            const IconComponent = group.icon;
+            return (
+              <button
+                key={group.id}
+                className={`p-4 rounded-lg text-center transition-all duration-200 ${
+                  activeGroup === group.id
+                    ? "bg-[#C8A882] text-white shadow-lg"
+                    : "bg-gray-100 text-[#8B7355] hover:bg-gray-200"
+                }`}
+                onClick={() => {
+                  setActiveGroup(group.id);
+                  setActiveCategory(group.categories[0].id);
                   setShowExtras(false);
-                }
-              }}
-            >
-              {category.name}
-            </button>
-          ))}
+                }}
+              >
+                <IconComponent className="w-6 h-6 mx-auto mb-2" />
+                <span className="text-sm font-medium">{group.name}</span>
+              </button>
+            );
+          })}
         </div>
       </div>
 
-      <div className="space-y-6">
-        {/* Título de la categoría actual */}
-        <h2 className="text-xl font-bold mb-4">
-          {categories.find(cat => cat.id === activeCategory)?.name}
-        </h2>
+      {/* Subategorías del grupo seleccionado */}
+      {currentGroup && currentGroup.categories.length > 1 && (
+        <div className="mb-6">
+          <div className="flex flex-wrap gap-2">
+            {currentGroup.categories.map((category) => (
+              <button
+                key={category.id}
+                className={`px-4 py-2 rounded-full text-sm font-semibold transition-all duration-200 ${
+                  activeCategory === category.id
+                    ? "bg-[#8B7355] text-white shadow-md"
+                    : "bg-gray-200 text-gray-800 hover:bg-gray-300"
+                }`}
+                onClick={() => {
+                  setActiveCategory(category.id);
+                  if (!(category.id === 'naturales' || category.id === 'verdes')) {
+                    setShowExtras(false);
+                  }
+                }}
+              >
+                {category.name}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
+      <div className="space-y-4">
         {/* Si la categoría es naturales o verdes, mostrar botón de extras */}
         {(activeCategory === 'naturales' || activeCategory === 'verdes') && (
           <button
-            className="px-4 py-2 bg-amber-50 text-amber-800 border border-amber-200 rounded-md mb-4 inline-flex items-center"
+            className="px-4 py-2 bg-[#C8A882] bg-opacity-20 text-[#8B7355] border border-[#C8A882] rounded-lg mb-4 inline-flex items-center font-medium"
             onClick={() => setShowExtras(!showExtras)}
           >
             {showExtras ? 'Ocultar extras' : 'Mostrar extras'}
@@ -444,17 +500,17 @@ export default function BebidasSection() {
         {/* Extras (para jugos) */}
         {showExtras && (activeCategory === 'naturales' || activeCategory === 'verdes') && (
           <div className="mb-6">
-            <h3 className="text-lg font-semibold mb-3">EXTRAS</h3>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+            <h3 className="text-lg font-semibold mb-3 text-[#C8A882]">EXTRAS</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {bebidas.extras.map((extra) => (
                 <div 
                   key={extra.id}
-                  className="bg-white shadow-md rounded-lg p-3 border border-gray-100"
+                  className="bg-white shadow-md rounded-lg p-3 border border-[#C8A882]"
                 >
                   <div className="flex justify-between items-center">
-                    <h4 className="font-medium">{extra.name}</h4>
-                    <span className="font-bold text-gray-800">
-                      {formatPrice(prices[extra.id]) || "+0.50$"}
+                    <h4 className="font-medium text-[#8B7355]">{extra.name}</h4>
+                    <span className="font-bold text-[#C8A882]">
+                      {formatPrice(prices[extra.id]) || "+0.50€"}
                     </span>
                   </div>
                 </div>
@@ -463,34 +519,34 @@ export default function BebidasSection() {
           </div>
         )}
 
-        {/* Elementos de la categoría */}
-        <div className="grid gap-4">
+        {/* Elementos de la categoría - Diseño compacto para móviles */}
+        <div className="space-y-4">
           {bebidas[activeCategory]?.map((item) => (
             <div 
               key={item.id || item.name}
-              className="bg-white shadow-lg rounded-lg p-4 border border-gray-200 hover:shadow-xl transition-shadow duration-200"
+              className="bg-white shadow-md rounded-lg p-4 border border-[#C8A882] hover:border-[#8B7355] hover:shadow-lg transition-all duration-200"
             >
               <div className="flex justify-between items-start">
-                <div>
-                  <h3 className="font-bold text-lg mb-2">{item.name}</h3>
+                <div className="flex-1 pr-4">
+                  <h3 className="font-bold text-lg mb-1 text-[#8B7355]">{item.name}</h3>
                   {item.description && (
-                    <p className="text-gray-600 text-sm">{item.description}</p>
+                    <p className="text-gray-600 text-sm mb-2">{item.description}</p>
                   )}
 
                   {/* Para categorías de licores que tienen opciones de trago/servicio */}
                   {item.options && (
-                    <div className="mt-3 space-y-2">
+                    <div className="space-y-2 mt-2">
                       {item.options.map((option) => (
-                        <div key={option.id} className="flex justify-between items-center border-b border-gray-100 pb-2">
-                          <div>
-                            <span className="font-medium text-amber-800">{option.type}</span>
+                        <div key={option.id} className="flex justify-between items-center py-1">
+                          <div className="flex-1">
+                            <span className="font-medium text-[#8B7355] text-sm">{option.type}</span>
                             {option.description && (
                               <span className="text-xs text-gray-500 ml-2">
-                                {option.description}
+                                ({option.description})
                               </span>
                             )}
                           </div>
-                          <span className="font-bold">
+                          <span className="font-bold text-[#C8A882] ml-2">
                             {formatPrice(prices[option.id])}
                           </span>
                         </div>
@@ -501,14 +557,14 @@ export default function BebidasSection() {
                 
                 {/* Para productos que no tienen opciones de trago/servicio */}
                 {!item.options && (
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-3 flex-shrink-0">
                     <button
                       onClick={() => setSelectedImage(item)}
-                      className="text-gray-500 hover:text-gray-700 transition-colors"
+                      className="text-gray-500 hover:text-[#8B7355] transition-colors"
                     >
-                      <Image size={20} />
+                      <Image size={18} />
                     </button>
-                    <span className="font-bold text-lg text-gray-800">
+                    <span className="font-bold text-lg text-[#C8A882]">
                       {formatPrice(prices[item.id])}
                     </span>
                   </div>
@@ -518,9 +574,9 @@ export default function BebidasSection() {
                 {item.options && (
                   <button
                     onClick={() => setSelectedImage(item)}
-                    className="text-gray-500 hover:text-gray-700 transition-colors"
+                    className="text-gray-500 hover:text-[#8B7355] transition-colors flex-shrink-0"
                   >
-                    <Image size={20} />
+                    <Image size={18} />
                   </button>
                 )}
               </div>
@@ -529,8 +585,8 @@ export default function BebidasSection() {
 
           {/* Si no hay elementos en la categoría */}
           {(!bebidas[activeCategory] || bebidas[activeCategory].length === 0) && (
-            <div className="text-center py-4 text-gray-500">
-              No hay productos disponibles en esta categoría
+            <div className="text-center py-8 text-gray-500">
+              <p>No hay productos disponibles en esta categoría</p>
             </div>
           )}
         </div>

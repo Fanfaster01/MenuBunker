@@ -57,22 +57,22 @@ export default function MenuInfantilSection() {
       <Header title="MENÚ INFANTIL" />
 
       <div className="space-y-6">
-        <div className="grid gap-4">
+        <div className="space-y-4">
           {menuInfantil.map((item) => (
             <div 
               key={item.id}
-              className="bg-white shadow-lg rounded-lg p-4 border border-gray-200 hover:shadow-xl transition-shadow duration-200"
+              className="bg-white shadow-md rounded-lg p-4 border border-[#C8A882] hover:border-[#8B7355] hover:shadow-lg transition-all duration-200"
             >
               <div className="flex justify-between items-start">
-                <h3 className="font-bold text-lg mb-2">{item.name}</h3>
+                <h3 className="font-bold text-lg mb-2 text-[#8B7355]">{item.name}</h3>
                 <div className="flex items-center gap-4">
                   <button
                     onClick={() => setSelectedImage(item)}
-                    className="text-gray-500 hover:text-gray-700 transition-colors"
+                    className="text-gray-500 hover:text-[#8B7355] transition-colors"
                   >
-                    <Image size={20} />
+                    <Image size={18} />
                   </button>
-                  <span className="font-bold text-lg text-gray-800">
+                  <span className="font-bold text-lg text-[#C8A882]">
                     {formatPrice(prices[item.id])}
                   </span>
                 </div>

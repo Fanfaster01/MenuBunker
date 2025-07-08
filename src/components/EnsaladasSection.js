@@ -96,15 +96,15 @@ return (
 
     <div className="space-y-6">
       {/* Ensaladas Base */}
-      <div className="grid gap-4">
+      <div className="space-y-4">
         {ensaladas.map((item) => (
           <div 
             key={item.id}
-            className="bg-white shadow-lg rounded-lg p-4 border border-gray-200 hover:shadow-xl transition-shadow duration-200"
+            className="bg-white shadow-md rounded-lg p-4 border border-[#C8A882] hover:border-[#8B7355] hover:shadow-lg transition-all duration-200"
           >
             <div className="flex justify-between items-start">
               <div>
-                <h3 className="font-bold text-lg mb-2">{item.name}</h3>
+                <h3 className="font-bold text-lg mb-2 text-[#8B7355]">{item.name}</h3>
                 {item.isShared && (
                   <span className="text-xs bg-gray-100 px-2 py-1 rounded">Para compartir</span>
                 )}
@@ -112,11 +112,11 @@ return (
               <div className="flex items-center gap-4">
                 <button
                   onClick={() => setSelectedImage(item)}
-                  className="text-gray-500 hover:text-gray-700 transition-colors"
+                  className="text-gray-500 hover:text-[#8B7355] transition-colors"
                 >
-                  <Image size={20} />
+                  <Image size={18} />
                 </button>
-                <span className="font-bold text-lg text-gray-800">
+                <span className="font-bold text-lg text-[#C8A882]">
                   {formatPrice(ensaladaPrices[item.id])}
                 </span>
               </div>
@@ -128,16 +128,16 @@ return (
 
 {/* Sección de Proteínas Adicionales */}
 <div className="mt-8">
-  <h2 className="text-xl font-bold mb-4">ADICIONALES</h2>
-  <div className="grid gap-3">
+  <h2 className="text-xl font-bold mb-4 text-[#C8A882]">ADICIONALES</h2>
+  <div className="space-y-3">
     {proteinas.map((proteina) => (
       <div 
         key={proteina.id}
-        className="bg-white shadow-lg rounded-lg p-3 border border-gray-200 hover:shadow-xl transition-shadow duration-200"
+        className="bg-white shadow-md rounded-lg p-3 border border-[#C8A882] hover:border-[#8B7355] hover:shadow-lg transition-all duration-200"
       >
         <div className="flex justify-between items-center">
-          <h3 className="font-bold">{proteina.name}</h3>
-          <span className="font-bold text-gray-800">
+          <h3 className="font-bold text-[#8B7355]">{proteina.name}</h3>
+          <span className="font-bold text-[#C8A882]">
             + {formatPrice(proteinaPrices[proteina.id])}
           </span>
         </div>

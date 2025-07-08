@@ -102,7 +102,7 @@ export default function ContornosSection({ title = "CONTORNOS" }) {
   if (loading) {
     return (
       <div className="mt-8">
-        <h2 className="text-xl font-bold mb-4">{title}</h2>
+        <h2 className="text-xl font-bold mb-4 text-[#C8A882]">{title}</h2>
         <div className="text-center py-4">Cargando contornos...</div>
       </div>
     );
@@ -111,7 +111,7 @@ export default function ContornosSection({ title = "CONTORNOS" }) {
   if (error) {
     return (
       <div className="mt-8">
-        <h2 className="text-xl font-bold mb-4">{title}</h2>
+        <h2 className="text-xl font-bold mb-4 text-[#C8A882]">{title}</h2>
         <div className="text-center py-4 text-red-600">Error al cargar los contornos</div>
       </div>
     );
@@ -119,23 +119,23 @@ export default function ContornosSection({ title = "CONTORNOS" }) {
 
   return (
     <div className="mt-8">
-      <h2 className="text-xl font-bold mb-4">{title}</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+      <h2 className="text-xl font-bold mb-4 text-[#C8A882]">{title}</h2>
+      <div className="space-y-3">
         {contornos.map((contorno) => (
           <div 
             key={contorno.id}
-            className="bg-white shadow-lg rounded-lg p-3 border border-gray-200 hover:shadow-xl transition-shadow duration-200"
+            className="bg-white shadow-md rounded-lg p-3 border border-[#C8A882] hover:border-[#8B7355] hover:shadow-lg transition-all duration-200"
           >
             <div className="flex justify-between items-center">
-              <h3 className="font-bold">{contorno.name}</h3>
+              <h3 className="font-bold text-[#8B7355]">{contorno.name}</h3>
               <div className="flex items-center gap-4">
                 <button
                   onClick={() => setSelectedImage(contorno)}
-                  className="text-gray-500 hover:text-gray-700 transition-colors"
+                  className="text-gray-500 hover:text-[#8B7355] transition-colors"
                 >
-                  <Image size={20} />
+                  <Image size={18} />
                 </button>
-                <span className="font-bold text-gray-800">
+                <span className="font-bold text-[#C8A882]">
                   {formatPrice(prices[contorno.id])}
                 </span>
               </div>
