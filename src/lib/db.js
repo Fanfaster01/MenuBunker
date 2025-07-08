@@ -7,8 +7,8 @@ const config = {
     database: process.env.DB_NAME,
     port: parseInt(process.env.DB_PORT || '1433'),
     options: {
-      trustServerCertificate: process.env.DB_TRUST_SERVER_CERTIFICATE === 'true',
-      encrypt: process.env.DB_ENCRYPT !== 'false',
+      trustServerCertificate: process.env.DB_TRUST_SERVER_CERTIFICATE === 'true' || process.env.DB_TRUST_CERT === 'true',
+      encrypt: process.env.DB_ENCRYPT === 'true' || (process.env.DB_ENCRYPT !== 'false' && process.env.DB_ENCRYPT !== 'not_set'),
       enableArithAbort: true
     },
     pool: {
