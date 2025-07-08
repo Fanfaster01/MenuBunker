@@ -5,10 +5,10 @@ const config = {
     password: process.env.VICTORIANA_DB_PASSWORD,
     server: process.env.VICTORIANA_DB_HOST,
     database: process.env.VICTORIANA_DB_NAME,
-    port: parseInt(process.env.VICTORIANA_DB_PORT || '14333'),
+    port: parseInt(process.env.VICTORIANA_DB_PORT || '1433'),
     options: {
-      trustServerCertificate: process.env.DB_TRUST_SERVER_CERTIFICATE === 'true',
-      encrypt: process.env.DB_ENCRYPT !== 'false',
+      trustServerCertificate: process.env.VICTORIANA_DB_TRUST_SERVER_CERTIFICATE !== 'false',
+      encrypt: process.env.VICTORIANA_DB_ENCRYPT === 'true',
       enableArithAbort: true
     },
     pool: {
