@@ -12,9 +12,9 @@ export function getVictorianaDBConfig() {
       enableArithAbort: true
     },
     pool: {
-      max: 10,
+      max: 5,  // Reducido de 10 a 5 para evitar saturación
       min: 0,
-      idleTimeoutMillis: 30000
+      idleTimeoutMillis: 10000  // Reducido de 30s a 10s para liberar conexiones más rápido
     },
     connectionTimeout: 30000,
     requestTimeout: 30000
