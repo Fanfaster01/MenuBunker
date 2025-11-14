@@ -22,18 +22,6 @@ export default function DesayunosSection() {
       description: "Panquecas acompañadas de huevo y tocineta, con mermelada de frutos rojos.",
       id: "6597",
       imageUrl: "URL_DE_LA_IMAGEN"
-    },
-    {
-      name: "HUEVOS BENEDICTINOS",
-      description: "Pan de auyama, huevos pochados cubiertos de salsa holandesa y tocineta crocante.",
-      id: "6599",
-      imageUrl: "URL_DE_LA_IMAGEN"
-    },
-    {
-      name: "TRÍO DE AREPAS",
-      description: "Con tres rellenos de tu preferencia (Uno por arepa)",
-      id: "6606",
-      imageUrl: "URL_DE_LA_IMAGEN"
     }
   ];
 

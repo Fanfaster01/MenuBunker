@@ -45,11 +45,6 @@ export default function ContornosSection({ title = "CONTORNOS" }) {
       imageUrl: "URL_DE_LA_IMAGEN"
     },
     {
-      name: "Tomate Relleno",
-      id: "6896",
-      imageUrl: "URL_DE_LA_IMAGEN"
-    },
-    {
       name: "Vegetales al grill",
       id: "1051",
       imageUrl: "URL_DE_LA_IMAGEN"

@@ -13,14 +13,14 @@ export default function EntradasSection() {
   const entradaItems = [
     {
       name: "TABLA DE EMBUTIDOS",
-      description: "Variedad de embutidos para degustar, frutos secos, aceitunas, mermelada de fresa, mozzarella de búfala y pan tostado.",
-      id: "3997",
+      description: "Selección de curados, embutidos y quesos, acompañados de pan al ajillo y garrapiñado de frutos secos.",
+      id: "7217",
       imageUrl: "URL_DE_LA_IMAGEN"
     },
     {
       name: "CROQUETAS SERRANAS",
-      description: "Croquetas de jamón serrano acompañadas de una salsa de piña.",
-      id: "6629",
+      description: "Cremosa croquetas de jamón serrano servidas en una base de mermelada de tomate, coronada con un crocante de ají cítrico.",
+      id: "7216",
       imageUrl: "URL_DE_LA_IMAGEN"
     },
     {

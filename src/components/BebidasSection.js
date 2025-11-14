@@ -89,6 +89,7 @@ export default function BebidasSection() {
     ],
     verdes: [
       { name: "CELERY", description: "Pepino, piña, celery, zumo de limón y cordial de jengibre.", id: "6682", imageUrl: "URL_DE_LA_IMAGEN" },
+      { name: "ESPINACA", description: "Fresa, espinacas, piña y zumo de limón.", id: "7247", imageUrl: "URL_DE_LA_IMAGEN" },
     ],
     extras: [
       { name: "LECHE CONDENSADA", id: "3946", imageUrl: "URL_DE_LA_IMAGEN" },

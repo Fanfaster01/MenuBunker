@@ -49,9 +49,9 @@ export default function PrincipalesSection() {
       imageUrl: "URL_DE_LA_IMAGEN"
     },
     {
-      name: "SALMÓN",
-      description: "Salmón a la plancha ó al ajillo, acompañado de un (1) contorno de su elección.",
-      id: "6891",
+      name: "PAELLA",
+      description: "Arroz con mariscos y vegetales al estilo español.",
+      id: "7200",
       imageUrl: "URL_DE_LA_IMAGEN"
     },
     {
@@ -73,9 +73,21 @@ export default function PrincipalesSection() {
       imageUrl: "URL_DE_LA_IMAGEN"
     },
     {
-      name: "RISOTTO DE PUNTA AHUMADA",
-      description: "Arroz cremoso, punta trasera de res ahumada, acompañado con queso parmesano.",
-      id: "2341",
+      name: "RISOTTO DE LOMITO Y SETAS",
+      description: "Arroz cremoso, lomito de res y setas, acompañado con queso parmesano.",
+      id: "7202",
+      imageUrl: "URL_DE_LA_IMAGEN"
+    },
+    {
+      name: "ASOPADO DE MARISCOS",
+      description: "Arroz caldoso acompañado de una variada selección de mariscos.",
+      id: "7214",
+      imageUrl: "URL_DE_LA_IMAGEN"
+    },
+    {
+      name: "PARRILLA PREMIUM",
+      description: "Costilla de cerdo ahumada artesanal, pollo, solomo al grill y camarones acompañados de tostosnes y ensalada cesar.",
+      id: "6620",
       imageUrl: "URL_DE_LA_IMAGEN"
     }
   ];
