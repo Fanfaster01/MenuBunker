@@ -12,7 +12,7 @@
     "@anthropic-ai/claude-code": "^1.0.43",
     "lucide-react": "^0.525.0",
     "mssql": "^11.0.1",
-    "next": "^15.3.5",
+    "next": "15.3.8",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
   },
