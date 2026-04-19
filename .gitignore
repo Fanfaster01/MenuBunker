@@ -39,6 +39,9 @@ yarn-error.log*
 # claude code
 .claude/
 
+# scripts: exploration output files (contain sample DB data)
+scripts/*.txt
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

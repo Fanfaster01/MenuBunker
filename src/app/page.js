@@ -92,9 +92,21 @@ export default function Home() {
       </div>
 
       {/* Footer */}
-      <footer className="text-center py-8">
-        <div className="w-16 h-1 bg-gradient-to-r from-[#C8A882] to-[#8B7355] mx-auto rounded-full mb-4"></div>
-        <p className="text-gray-600 font-medium">&copy; 2025 Lista de Precios. Todos los derechos reservados.</p>
+      <footer className="text-center py-10">
+        <div className="w-16 h-1 bg-gradient-to-r from-[#C8A882] to-[#8B7355] mx-auto rounded-full mb-5"></div>
+        <p className="text-gray-600 font-medium">
+          &copy; {new Date().getFullYear()} Menú Digital. Todos los derechos reservados.
+        </p>
+        <p className="text-xs text-gray-500 mt-3 flex items-center justify-center gap-1.5">
+          <span>Hecho con</span>
+          <span className="text-[#C8302E] animate-pulse" aria-hidden="true">♥</span>
+          <span>por</span>
+          <span className="font-semibold bg-gradient-to-r from-[#C8A882] to-[#8B7355] bg-clip-text text-transparent">
+            Lumen
+          </span>
+          <span className="text-gray-400">·</span>
+          <span className="text-gray-400 italic">Claude Opus 4</span>
+        </p>
       </footer>
     </main>
   );
