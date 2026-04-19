@@ -404,7 +404,7 @@ export default function BebidasSection() {
   // Formatear el precio
   const formatPrice = (price) => {
     if (price === undefined || price === null) return "Cargando...";
-    return `${price.toFixed(2)}€`;
+    return `$${price.toFixed(2)}`;
   };
 
   // Encontrar el grupo actual
@@ -511,7 +511,7 @@ export default function BebidasSection() {
                   <div className="flex justify-between items-center">
                     <h4 className="font-medium text-[#8B7355]">{extra.name}</h4>
                     <span className="font-bold text-[#C8A882]">
-                      {formatPrice(prices[extra.id]) || "+0.50€"}
+                      {formatPrice(prices[extra.id]) || "+$0.50"}
                     </span>
                   </div>
                 </div>

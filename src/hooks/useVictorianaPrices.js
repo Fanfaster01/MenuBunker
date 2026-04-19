@@ -62,7 +62,7 @@ export default function useVictorianaPrices() {
     if (price === null || price === undefined) return 'Consultar';
     return new Intl.NumberFormat('es-VE', {
       style: 'currency',
-      currency: 'EUR',
+      currency: 'USD',
       minimumFractionDigits: 2,
       maximumFractionDigits: 2
     }).format(price);
