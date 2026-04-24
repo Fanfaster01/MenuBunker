@@ -42,6 +42,12 @@ yarn-error.log*
 # scripts: exploration output files (contain sample DB data)
 scripts/*.txt
 
+# npm config: local-only, depende de la plataforma (Windows vs Linux).
+# Vercel buildea en Linux y necesita binarios nativos Linux, mientras que
+# las máquinas de dev en Windows necesitan binarios Win32. Cada developer
+# mantiene su propio .npmrc local.
+.npmrc
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

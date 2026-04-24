@@ -1,5 +1,21 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  experimental: {
+    serverActions: {
+      bodySizeLimit: '6mb', // permitir imágenes comprimidas al subir via Server Action
+    },
+  },
+  images: {
+    // Permite cargar imágenes servidas desde Supabase Storage con <Image> optimizado.
+    // El hostname se extrae de NEXT_PUBLIC_SUPABASE_URL en runtime vía env var.
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '*.supabase.co',
+        pathname: '/storage/v1/object/public/**',
+      },
+    ],
+  },
   async redirects() {
     // Redirigir rutas viejas hardcoded del Bunker al menú dinámico nuevo.
     // Preserva bookmarks y enlaces externos existentes.
