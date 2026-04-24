@@ -115,6 +115,56 @@ export async function uploadProductImage(formData) {
 }
 
 /**
+ * Borra DEFINITIVAMENTE un producto del cache.
+ * Solo permitido si is_active=false (eliminado del ERP).
+ * El CASCADE FK borra también su metadata.
+ */
+export async function deleteProductPermanently(codigo) {
+  const { supabase } = await requireAdmin();
+
+  if (!codigo || typeof codigo !== 'string') {
+    return { ok: false, error: 'codigo inválido' };
+  }
+
+  const { data: row, error: fetchErr } = await supabase
+    .from('victoriana_product_cache')
+    .select('codigo, descri, is_active, meta:victoriana_product_meta(image_url)')
+    .eq('codigo', codigo)
+    .maybeSingle();
+
+  if (fetchErr) return { ok: false, error: fetchErr.message };
+  if (!row) return { ok: false, error: 'Producto no encontrado' };
+  if (row.is_active !== false) {
+    return {
+      ok: false,
+      error: 'Solo se pueden borrar definitivamente productos marcados como "Eliminados del ERP".',
+    };
+  }
+
+  // Borrar imagen del Storage si existe
+  const imageUrl = row.meta?.[0]?.image_url || row.meta?.image_url || null;
+  if (imageUrl) {
+    const admin = getSupabaseAdmin();
+    const marker = `/object/public/${BUCKET}/`;
+    const idx = imageUrl.indexOf(marker);
+    const path = idx >= 0 ? decodeURIComponent(imageUrl.substring(idx + marker.length)) : null;
+    if (path) {
+      await admin.storage.from(BUCKET).remove([path]).catch(() => {});
+    }
+  }
+
+  const { error: delErr } = await supabase
+    .from('victoriana_product_cache')
+    .delete()
+    .eq('codigo', codigo);
+
+  if (delErr) return { ok: false, error: delErr.message };
+
+  revalidatePath('/admin/victoriana/items');
+  return { ok: true, deletedName: row.descri };
+}
+
+/**
  * Borra la imagen de un producto.
  */
 export async function removeProductImage(codigo, storagePath) {

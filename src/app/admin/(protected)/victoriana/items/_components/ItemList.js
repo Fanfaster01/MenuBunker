@@ -2,8 +2,8 @@
 
 import { useMemo, useState } from 'react';
 import Image from 'next/image';
-import { Pencil, Image as ImageIcon, FileText, Star, Eye, EyeOff, Search, X, Package } from 'lucide-react';
-import { updateProductMeta, removeProductImage } from '../actions';
+import { Pencil, Image as ImageIcon, FileText, Star, Eye, EyeOff, Search, X, Package, AlertTriangle, Trash2 } from 'lucide-react';
+import { updateProductMeta, removeProductImage, deleteProductPermanently } from '../actions';
 import { extractStoragePath } from '@/lib/imageUpload';
 import ItemEditModal from './ItemEditModal';
 
@@ -59,7 +59,8 @@ export default function ItemList({ items, departments, groups }) {
     if (statusFilter === 'no-image') list = list.filter((i) => !i.image_url);
     else if (statusFilter === 'no-desc') list = list.filter((i) => !i.custom_description);
     else if (statusFilter === 'featured') list = list.filter((i) => i.is_featured);
-    else if (statusFilter === 'hidden') list = list.filter((i) => i.is_hidden);
+    else if (statusFilter === 'hidden-by-me') list = list.filter((i) => i.is_hidden && i.is_active !== false);
+    else if (statusFilter === 'deleted-from-erp') list = list.filter((i) => i.is_active === false);
 
     return list;
   }, [items, query, deptFilter, groupFilter, statusFilter]);
@@ -74,6 +75,33 @@ export default function ItemList({ items, departments, groups }) {
       setEditing(null);
     }
     return result;
+  }
+
+  /**
+   * Borra DEFINITIVAMENTE un producto del cache.
+   * Solo permitido si is_active=false (ya marcado como eliminado del ERP).
+   */
+  async function deletePermanently(item) {
+    const confirmed = window.confirm(
+      `¿Borrar definitivamente "${item.effective_name}"?\n\n` +
+        `Este producto ya no está en Victoriana. Al borrarlo se elimina del caché Y de su metadata ` +
+        `(descripción, imagen, etc.).\n\nEsta acción no se puede deshacer.`
+    );
+    if (!confirmed) return;
+
+    setToggling((prev) => new Set(prev).add(item.codigo));
+    const result = await deleteProductPermanently(item.codigo);
+    setToggling((prev) => {
+      const next = new Set(prev);
+      next.delete(item.codigo);
+      return next;
+    });
+
+    if (!result.ok) {
+      showFlash('error', result.error || 'No se pudo borrar');
+    } else {
+      showFlash('success', `"${result.deletedName}" eliminado definitivamente`);
+    }
   }
 
   /**
@@ -201,7 +229,8 @@ export default function ItemList({ items, departments, groups }) {
             <option value="no-image">Sin imagen</option>
             <option value="no-desc">Sin descripción</option>
             <option value="featured">Destacados</option>
-            <option value="hidden">Ocultos</option>
+            <option value="hidden-by-me">Ocultos por mí</option>
+            <option value="deleted-from-erp">🗑️ Eliminados del ERP</option>
           </select>
 
           {hasActiveFilters && (
@@ -235,6 +264,7 @@ export default function ItemList({ items, departments, groups }) {
                 isToggling={toggling.has(item.codigo)}
                 onEdit={() => setEditing(item)}
                 onToggleVisibility={() => toggleVisibility(item)}
+                onDeletePermanently={() => deletePermanently(item)}
               />
             ))}
           </ul>
@@ -262,29 +292,26 @@ export default function ItemList({ items, departments, groups }) {
   );
 }
 
-function ItemRow({ item, isToggling, onEdit, onToggleVisibility }) {
+function ItemRow({ item, isToggling, onEdit, onToggleVisibility, onDeletePermanently }) {
   const price = item.final_price != null ? `$${Number(item.final_price).toFixed(2)}` : '—';
   const hasImage = !!item.image_url;
   const hasDesc = !!item.custom_description;
   const details = [item.marca, item.presentacion].filter(Boolean).join(' · ');
   const isVisible = !item.is_hidden;
+  const isDeletedFromErp = item.is_active === false;
+
+  let rowBg = 'bg-white hover:bg-red-50/30';
+  if (isDeletedFromErp) {
+    rowBg = 'bg-red-50/40 hover:bg-red-50/60 border-l-4 border-l-red-300';
+  } else if (!isVisible) {
+    rowBg = 'bg-gray-50/70 opacity-70 hover:bg-red-50/20';
+  }
 
   return (
-    <li
-      className={`p-3 sm:p-4 flex items-center gap-3 transition-colors ${
-        isVisible ? 'bg-white hover:bg-red-50/30' : 'bg-gray-50/70 opacity-70 hover:bg-red-50/20'
-      }`}
-    >
+    <li className={`p-3 sm:p-4 flex items-center gap-3 transition-colors ${rowBg}`}>
       <div className="relative w-12 h-12 sm:w-14 sm:h-14 rounded-lg overflow-hidden border border-gray-200 bg-gray-100 flex-shrink-0">
         {hasImage ? (
-          <Image
-            src={item.image_url}
-            alt={item.effective_name}
-            fill
-            sizes="56px"
-            className="object-cover"
-            unoptimized
-          />
+          <Image src={item.image_url} alt={item.effective_name} fill sizes="56px" className="object-cover" unoptimized />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-gray-400">
             <Package className="w-5 h-5" />
@@ -294,12 +321,22 @@ function ItemRow({ item, isToggling, onEdit, onToggleVisibility }) {
 
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-1.5 flex-wrap">
-          <h3 className={`font-semibold ${isVisible ? 'text-[#6B5A45]' : 'text-gray-500'} truncate`}>
+          <h3
+            className={`font-semibold truncate ${
+              isDeletedFromErp ? 'text-red-700 line-through' : isVisible ? 'text-[#6B5A45]' : 'text-gray-500'
+            }`}
+          >
             {item.effective_name}
           </h3>
-          {item.is_featured && (
+          {item.is_featured && !isDeletedFromErp && (
             <span title="Destacado" className="inline-flex">
               <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+            </span>
+          )}
+          {isDeletedFromErp && (
+            <span className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded bg-red-100 text-red-800 font-bold uppercase tracking-wide">
+              <AlertTriangle className="w-3 h-3" />
+              Eliminado del ERP
             </span>
           )}
           {item.group_name && (
@@ -323,34 +360,52 @@ function ItemRow({ item, isToggling, onEdit, onToggleVisibility }) {
         </div>
       </div>
 
-      {/* Quick visibility toggle */}
-      <button
-        onClick={onToggleVisibility}
-        disabled={isToggling}
-        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all flex-shrink-0 ${
-          isVisible
-            ? 'border-green-200 bg-green-50 text-green-700 hover:bg-green-100'
-            : 'border-gray-300 bg-gray-100 text-gray-500 hover:bg-gray-200'
-        } disabled:opacity-50 disabled:cursor-not-allowed`}
-        aria-label={isVisible ? 'Ocultar del menú' : 'Mostrar en el menú'}
-      >
-        {isToggling ? (
-          <div className="w-3.5 h-3.5 border-2 border-current border-t-transparent rounded-full animate-spin" />
-        ) : isVisible ? (
-          <Eye className="w-3.5 h-3.5" />
-        ) : (
-          <EyeOff className="w-3.5 h-3.5" />
-        )}
-        {isVisible ? 'Visible' : 'Oculto'}
-      </button>
+      {isDeletedFromErp ? (
+        <button
+          onClick={onDeletePermanently}
+          disabled={isToggling}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border border-red-300 bg-red-50 text-red-700 hover:bg-red-100 transition-all flex-shrink-0 disabled:opacity-50 disabled:cursor-not-allowed"
+          aria-label="Borrar definitivamente"
+          title="Borrar este producto del caché y su metadata"
+        >
+          {isToggling ? (
+            <div className="w-3.5 h-3.5 border-2 border-current border-t-transparent rounded-full animate-spin" />
+          ) : (
+            <Trash2 className="w-3.5 h-3.5" />
+          )}
+          Borrar
+        </button>
+      ) : (
+        <>
+          <button
+            onClick={onToggleVisibility}
+            disabled={isToggling}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all flex-shrink-0 ${
+              isVisible
+                ? 'border-green-200 bg-green-50 text-green-700 hover:bg-green-100'
+                : 'border-gray-300 bg-gray-100 text-gray-500 hover:bg-gray-200'
+            } disabled:opacity-50 disabled:cursor-not-allowed`}
+            aria-label={isVisible ? 'Ocultar del menú' : 'Mostrar en el menú'}
+          >
+            {isToggling ? (
+              <div className="w-3.5 h-3.5 border-2 border-current border-t-transparent rounded-full animate-spin" />
+            ) : isVisible ? (
+              <Eye className="w-3.5 h-3.5" />
+            ) : (
+              <EyeOff className="w-3.5 h-3.5" />
+            )}
+            {isVisible ? 'Visible' : 'Oculto'}
+          </button>
 
-      <button
-        onClick={onEdit}
-        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border border-[#C8A882]/50 bg-white text-[#8B7355] hover:bg-[#C8A882]/10 transition-colors flex-shrink-0"
-      >
-        <Pencil className="w-3.5 h-3.5" />
-        Editar
-      </button>
+          <button
+            onClick={onEdit}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border border-[#C8A882]/50 bg-white text-[#8B7355] hover:bg-[#C8A882]/10 transition-colors flex-shrink-0"
+          >
+            <Pencil className="w-3.5 h-3.5" />
+            Editar
+          </button>
+        </>
+      )}
     </li>
   );
 }

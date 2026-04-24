@@ -61,7 +61,8 @@ export default async function AdminVictorianaItemsPage() {
   const withImage = items.filter((i) => i.image_url).length;
   const withDesc = items.filter((i) => i.custom_description).length;
   const featured = items.filter((i) => i.is_featured).length;
-  const hidden = items.filter((i) => i.is_hidden).length;
+  const hiddenByMe = items.filter((i) => i.is_hidden && i.is_active !== false).length;
+  const deletedFromErp = items.filter((i) => i.is_active === false).length;
 
   return (
     <div>
@@ -79,12 +80,21 @@ export default async function AdminVictorianaItemsPage() {
           <span>
             <strong>{featured}</strong> destacados
           </span>
-          {hidden > 0 && (
-            <span className="text-red-700">
-              <strong>{hidden}</strong> ocultos
+          {hiddenByMe > 0 && (
+            <span className="text-amber-700">
+              <strong>{hiddenByMe}</strong> ocultos por ti
             </span>
           )}
         </p>
+        {deletedFromErp > 0 && (
+          <div className="mt-3 rounded-xl bg-red-50 border border-red-200 px-4 py-2.5 text-sm text-red-800 flex items-center gap-2">
+            <span className="text-base">🗑️</span>
+            <span>
+              <strong>{deletedFromErp}</strong> producto{deletedFromErp === 1 ? '' : 's'} eliminado{deletedFromErp === 1 ? '' : 's'}{' '}
+              de Victoriana. Filtra "Eliminados del ERP" para revisar y borrar definitivamente.
+            </span>
+          </div>
+        )}
       </header>
 
       <ItemList items={items} departments={departments} groups={groups} />

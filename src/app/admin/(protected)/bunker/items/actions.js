@@ -146,6 +146,75 @@ export async function uploadItemImage(formData) {
 }
 
 /**
+ * Borra DEFINITIVAMENTE un item del cache.
+ *
+ * Solo permitido para items con `is_active = false` (ya marcados como
+ * eliminados del ERP por el sync). El CASCADE de la FK borra también
+ * la metadata correspondiente, así que ANTES de llamar esto, asegúrate
+ * de que el item realmente desapareció del ERP definitivamente.
+ *
+ * Esto es para limpieza manual del cache cuando el admin confirma que
+ * el item ya no volverá.
+ */
+export async function deleteItemPermanently(xetuxItemId) {
+  const { supabase } = await requireAdmin();
+
+  if (!xetuxItemId || typeof xetuxItemId !== 'number') {
+    return { ok: false, error: 'xetux_item_id inválido' };
+  }
+
+  // Guard: solo permitir borrado de items YA marcados inactivos.
+  const { data: row, error: fetchErr } = await supabase
+    .from('bunker_item_cache')
+    .select('xetux_item_id, item_name, is_active, image_url:bunker_item_meta(image_url)')
+    .eq('xetux_item_id', xetuxItemId)
+    .maybeSingle();
+
+  if (fetchErr) return { ok: false, error: fetchErr.message };
+  if (!row) return { ok: false, error: 'Item no encontrado' };
+  if (row.is_active !== false) {
+    return {
+      ok: false,
+      error: 'Solo se pueden borrar definitivamente items marcados como "Eliminados del ERP".',
+    };
+  }
+
+  // Borrar imagen del Storage si existe (antes del CASCADE)
+  const imageUrl = row.image_url?.[0]?.image_url || row.image_url?.image_url || null;
+  if (imageUrl) {
+    const admin = getSupabaseAdmin();
+    const path = extractStoragePathFromUrl(imageUrl, BUCKET);
+    if (path) {
+      await admin.storage.from(BUCKET).remove([path]).catch(() => {
+        /* no bloqueamos por fallo del storage */
+      });
+    }
+  }
+
+  // DELETE en cache → CASCADE borra meta automáticamente
+  const { error: delErr } = await supabase
+    .from('bunker_item_cache')
+    .delete()
+    .eq('xetux_item_id', xetuxItemId);
+
+  if (delErr) return { ok: false, error: delErr.message };
+
+  revalidatePath('/admin/bunker/items');
+  return { ok: true, deletedName: row.item_name };
+}
+
+/**
+ * Helper: extrae el path interno del Storage desde un publicUrl.
+ */
+function extractStoragePathFromUrl(publicUrl, bucket) {
+  if (!publicUrl) return null;
+  const marker = `/object/public/${bucket}/`;
+  const idx = publicUrl.indexOf(marker);
+  if (idx < 0) return null;
+  return decodeURIComponent(publicUrl.substring(idx + marker.length));
+}
+
+/**
  * Borra la imagen de un item (remueve del Storage + limpia image_url).
  */
 export async function removeItemImage(xetuxItemId, storagePath) {
