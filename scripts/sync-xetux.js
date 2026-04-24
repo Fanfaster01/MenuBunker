@@ -33,7 +33,7 @@ if (fs.existsSync(envPath)) {
 // ========== Run ==========
 (async () => {
   try {
-    const { runXetuxSync } = await import('../src/lib/sync/xetux.js');
+    const { runXetuxSync } = await import('../src/lib/sync/xetux.mjs');
     const result = await runXetuxSync({ log: (msg) => console.log(msg) });
     process.exit(result.ok ? 0 : 1);
   } catch (err) {

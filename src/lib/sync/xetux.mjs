@@ -1,5 +1,7 @@
 import sql from 'mssql';
-import { getSupabaseAdmin } from '../supabaseAdmin';
+// Extensión .mjs explícita: necesario en Node.js puro (CLI script).
+// Next.js resuelve igual sin la extensión via webpack.
+import { getSupabaseAdmin } from '../supabaseAdmin.mjs';
 
 /**
  * Sync Xetux (SQL Server) → Supabase — módulo ESM reusable.
@@ -125,6 +127,22 @@ async function syncFamilies(pool, supabase, push) {
   if (error) throw new Error(`upsert bunker_family_cache: ${error.message}`);
   push(`   ✅ ${rows.length} familias sincronizadas.`);
 
+  // Delete-stale: borrar familias del cache que ya no existen en el ERP.
+  // Meta sobrevive (no hay FK CASCADE), por si la familia vuelve.
+  const currentIds = new Set(rows.map((r) => r.family_id));
+  const { data: cacheIds } = await supabase.from('bunker_family_cache').select('family_id');
+  const stale = (cacheIds || [])
+    .map((c) => c.family_id)
+    .filter((id) => !currentIds.has(id));
+  if (stale.length > 0) {
+    const { error: delErr } = await supabase
+      .from('bunker_family_cache')
+      .delete()
+      .in('family_id', stale);
+    if (delErr) throw new Error(`delete stale bunker_family_cache: ${delErr.message}`);
+    push(`   🗑️  ${stale.length} familias eliminadas del cache (no estaban en Xetux).`);
+  }
+
   // Auto-seed meta rows (solo para familias nuevas)
   const { data: existing } = await supabase.from('bunker_family_meta').select('family_id, slug');
   const existingIds = new Set((existing || []).map((e) => e.family_id));
@@ -220,7 +238,49 @@ async function syncItems(pool, supabase, push) {
     if (error) throw new Error(`upsert bunker_item_cache batch ${i}: ${error.message}`);
   }
   push(`   ✅ ${filteredRows.length} items sincronizados.`);
+
+  // Delete-stale: items que están en cache pero ya no en el fetch
+  // (eliminados/desactivados en Xetux). Meta sobrevive — si el item se
+  // reactiva, automáticamente se vuelve a asociar con su descripción/imagen.
+  const currentIds = new Set(filteredRows.map((r) => r.xetux_item_id));
+  const cacheIds = await fetchAllCachePks(supabase, 'bunker_item_cache', 'xetux_item_id');
+  const stale = cacheIds.filter((id) => !currentIds.has(id));
+  if (stale.length > 0) {
+    // Borrar en lotes (Supabase / PostgREST tiene límites en .in())
+    for (let i = 0; i < stale.length; i += 500) {
+      const batch = stale.slice(i, i + 500);
+      const { error: delErr } = await supabase
+        .from('bunker_item_cache')
+        .delete()
+        .in('xetux_item_id', batch);
+      if (delErr) throw new Error(`delete stale bunker_item_cache: ${delErr.message}`);
+    }
+    push(`   🗑️  ${stale.length} items eliminados del cache (no estaban en Xetux).`);
+  }
+
   return filteredRows.length;
+}
+
+/**
+ * Pagina toda la lista de PKs de una tabla cache.
+ * Necesario porque PostgREST tiene límite default de 1000 rows.
+ */
+async function fetchAllCachePks(supabase, tableName, pkColumn) {
+  const CHUNK = 1000;
+  const all = [];
+  let from = 0;
+  while (from < 100000) {
+    const { data, error } = await supabase
+      .from(tableName)
+      .select(pkColumn)
+      .range(from, from + CHUNK - 1);
+    if (error) throw new Error(`fetch PKs ${tableName}: ${error.message}`);
+    if (!data || data.length === 0) break;
+    for (const row of data) all.push(row[pkColumn]);
+    if (data.length < CHUNK) break;
+    from += CHUNK;
+  }
+  return all;
 }
 
 // ============================================================================

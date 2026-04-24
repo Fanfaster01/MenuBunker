@@ -1,18 +1,20 @@
-import 'server-only';
 import { createClient } from '@supabase/supabase-js';
 
 /**
  * Cliente Supabase con SERVICE ROLE — bypasea RLS completamente.
  *
- * USAR SOLO DESDE EL SERVIDOR (Server Actions, API routes) y SOLO después
- * de haber verificado que el usuario tiene permisos (ej. requireAdmin()).
+ * ⚠️ USAR SOLO DESDE EL SERVIDOR (Server Actions, API routes, CLI scripts) y
+ * SOLO después de haber verificado que el usuario tiene permisos (ej.
+ * requireAdmin()). NUNCA importar desde client components.
  *
- * NUNCA importar desde client components. El import 'server-only' protege
- * contra eso (build falla si algún client component lo importa).
+ * Protección natural: este módulo lee SUPABASE_SERVICE_ROLE_KEY (no
+ * NEXT_PUBLIC_*), por lo que si algún client component lo importara,
+ * fallaría al runtime con un error claro de env var ausente.
  *
- * Caso de uso principal: subir archivos al Storage, donde el JWT del
- * usuario no siempre se propaga correctamente desde @supabase/ssr al
- * sub-cliente de Storage.
+ * Casos de uso:
+ *  - Subir archivos al Storage (el JWT del usuario no siempre se propaga
+ *    correctamente desde @supabase/ssr al sub-cliente de Storage).
+ *  - Sync masivo con permisos full (admin client).
  */
 
 let _admin = null;

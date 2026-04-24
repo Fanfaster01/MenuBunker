@@ -1,5 +1,5 @@
 import sql from 'mssql';
-import { getSupabaseAdmin } from '../supabaseAdmin';
+import { getSupabaseAdmin } from '../supabaseAdmin.mjs';
 
 /**
  * Sync Victoriana (VAD10, SQL Server) → Supabase.
@@ -106,6 +106,22 @@ async function syncDepartments(pool, supabase, push) {
   if (error) throw new Error(`upsert victoriana_department_cache: ${error.message}`);
   push(`   ✅ ${rows.length} sincronizados.`);
 
+  // Delete-stale: depts que ya no existen en el ERP. Meta y grupos huérfanos
+  // sobreviven (no hay FK CASCADE entre cache y meta; entre cache y cache de
+  // grupos sí sigue habiendo CASCADE, eso es OK porque si un dept se va, sus
+  // grupos también deben irse).
+  const currentCodes = new Set(rows.map((r) => r.codigo));
+  const cacheCodes = await fetchAllCachePks(supabase, 'victoriana_department_cache', 'codigo');
+  const stale = cacheCodes.filter((c) => !currentCodes.has(c));
+  if (stale.length > 0) {
+    const { error: delErr } = await supabase
+      .from('victoriana_department_cache')
+      .delete()
+      .in('codigo', stale);
+    if (delErr) throw new Error(`delete stale victoriana_department_cache: ${delErr.message}`);
+    push(`   🗑️  ${stale.length} departamentos eliminados del cache.`);
+  }
+
   // Auto-seed meta (solo nuevos)
   const { data: existing } = await supabase.from('victoriana_department_meta').select('codigo, slug');
   const existingCodes = new Set((existing || []).map((e) => e.codigo));
@@ -163,6 +179,27 @@ async function syncGroups(pool, supabase, push) {
     if (error) throw new Error(`upsert victoriana_group_cache batch: ${error.message}`);
   }
   push(`   ✅ ${filtered.length} sincronizados.`);
+
+  // Delete-stale grupos. PK compuesta (codigo, departamento_codigo).
+  const currentKeys = new Set(filtered.map((r) => `${r.departamento_codigo}:${r.codigo}`));
+  const { data: cacheGroups } = await supabase
+    .from('victoriana_group_cache')
+    .select('codigo, departamento_codigo');
+  const staleGroups = (cacheGroups || []).filter(
+    (g) => !currentKeys.has(`${g.departamento_codigo}:${g.codigo}`)
+  );
+  if (staleGroups.length > 0) {
+    // Delete uno por uno con AND compuesto (mejor por API, son pocos)
+    for (const g of staleGroups) {
+      const { error: delErr } = await supabase
+        .from('victoriana_group_cache')
+        .delete()
+        .eq('codigo', g.codigo)
+        .eq('departamento_codigo', g.departamento_codigo);
+      if (delErr) throw new Error(`delete stale group ${g.codigo}: ${delErr.message}`);
+    }
+    push(`   🗑️  ${staleGroups.length} grupos eliminados del cache.`);
+  }
 
   // Auto-seed meta
   const { data: existing } = await supabase
@@ -246,7 +283,46 @@ async function syncProducts(pool, supabase, push) {
     if (error) throw new Error(`upsert victoriana_product_cache batch ${i}: ${error.message}`);
   }
   push(`   ✅ ${filtered.length} productos sincronizados.`);
+
+  // Delete-stale productos. Meta sobrevive — si el producto se reactiva,
+  // recupera descripción gourmet, imagen, flags.
+  const currentCodes = new Set(filtered.map((r) => r.codigo));
+  const cacheCodes = await fetchAllCachePks(supabase, 'victoriana_product_cache', 'codigo');
+  const stale = cacheCodes.filter((c) => !currentCodes.has(c));
+  if (stale.length > 0) {
+    for (let i = 0; i < stale.length; i += 500) {
+      const batch = stale.slice(i, i + 500);
+      const { error: delErr } = await supabase
+        .from('victoriana_product_cache')
+        .delete()
+        .in('codigo', batch);
+      if (delErr) throw new Error(`delete stale victoriana_product_cache: ${delErr.message}`);
+    }
+    push(`   🗑️  ${stale.length} productos eliminados del cache (no estaban en Victoriana).`);
+  }
+
   return filtered.length;
+}
+
+/**
+ * Pagina toda la lista de PKs. Necesario porque PostgREST trunca a 1000 rows.
+ */
+async function fetchAllCachePks(supabase, tableName, pkColumn) {
+  const CHUNK = 1000;
+  const all = [];
+  let from = 0;
+  while (from < 100000) {
+    const { data, error } = await supabase
+      .from(tableName)
+      .select(pkColumn)
+      .range(from, from + CHUNK - 1);
+    if (error) throw new Error(`fetch PKs ${tableName}: ${error.message}`);
+    if (!data || data.length === 0) break;
+    for (const row of data) all.push(row[pkColumn]);
+    if (data.length < CHUNK) break;
+    from += CHUNK;
+  }
+  return all;
 }
 
 // ============================================================================

@@ -27,7 +27,7 @@ if (fs.existsSync(envPath)) {
 
 (async () => {
   try {
-    const { runVictorianaSync } = await import('../src/lib/sync/victoriana.js');
+    const { runVictorianaSync } = await import('../src/lib/sync/victoriana.mjs');
     const result = await runVictorianaSync({ log: (msg) => console.log(msg) });
     process.exit(result.ok ? 0 : 1);
   } catch (err) {
