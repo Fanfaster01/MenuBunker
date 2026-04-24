@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from 'react';
 import Image from 'next/image';
-import { Pencil, Image as ImageIcon, FileText, Star, EyeOff, Search, X, Package } from 'lucide-react';
+import { Pencil, Image as ImageIcon, FileText, Star, Eye, EyeOff, Search, X, Package } from 'lucide-react';
 import { updateItemMeta, removeItemImage } from '../actions';
 import { extractStoragePath } from '@/lib/imageUpload';
 import ItemEditModal from './ItemEditModal';
@@ -12,6 +12,7 @@ import ItemEditModal from './ItemEditModal';
  */
 export default function ItemList({ items, families }) {
   const [editing, setEditing] = useState(null);
+  const [toggling, setToggling] = useState(new Set()); // xetux_item_ids in-flight
   const [flash, setFlash] = useState(null);
   const [query, setQuery] = useState('');
   const [familyFilter, setFamilyFilter] = useState('all');
@@ -51,6 +52,32 @@ export default function ItemList({ items, families }) {
       setEditing(null);
     }
     return result;
+  }
+
+  /**
+   * Toggle rápido de visibilidad: invierte is_hidden.
+   * Replica el UX de la lista de familias.
+   */
+  async function toggleVisibility(item) {
+    setToggling((prev) => new Set(prev).add(item.xetux_item_id));
+    const newHidden = !item.is_hidden;
+
+    const result = await updateItemMeta(item.xetux_item_id, { is_hidden: newHidden });
+
+    setToggling((prev) => {
+      const next = new Set(prev);
+      next.delete(item.xetux_item_id);
+      return next;
+    });
+
+    if (!result.ok) {
+      showFlash('error', result.error || 'No se pudo actualizar');
+    } else {
+      showFlash(
+        'success',
+        `"${item.effective_name}" ${newHidden ? 'oculto del menú' : 'visible en el menú'}`
+      );
+    }
   }
 
   async function handleRemoveImage(item) {
@@ -163,7 +190,9 @@ export default function ItemList({ items, families }) {
               <ItemRow
                 key={item.xetux_item_id}
                 item={item}
+                isToggling={toggling.has(item.xetux_item_id)}
                 onEdit={() => setEditing(item)}
+                onToggleVisibility={() => toggleVisibility(item)}
               />
             ))}
           </ul>
@@ -180,13 +209,18 @@ export default function ItemList({ items, families }) {
   );
 }
 
-function ItemRow({ item, onEdit }) {
+function ItemRow({ item, isToggling, onEdit, onToggleVisibility }) {
   const price = item.final_price != null ? `$${Number(item.final_price).toFixed(2)}` : '—';
   const hasImage = !!item.image_url;
   const hasDesc = !!item.custom_description;
+  const isVisible = !item.is_hidden;
 
   return (
-    <li className={`p-3 sm:p-4 flex items-center gap-3 hover:bg-amber-50/50 transition-colors ${item.is_hidden ? 'opacity-60' : ''}`}>
+    <li
+      className={`p-3 sm:p-4 flex items-center gap-3 transition-colors ${
+        isVisible ? 'bg-white hover:bg-amber-50/50' : 'bg-gray-50/70 opacity-70 hover:bg-amber-50/30'
+      }`}
+    >
       {/* Thumbnail */}
       <div className="relative w-12 h-12 sm:w-14 sm:h-14 rounded-lg overflow-hidden border border-gray-200 bg-gray-100 flex-shrink-0">
         {hasImage ? (
@@ -208,15 +242,12 @@ function ItemRow({ item, onEdit }) {
       {/* Info */}
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-1.5 flex-wrap">
-          <h3 className="font-semibold text-[#6B5A45] truncate">{item.effective_name}</h3>
+          <h3 className={`font-semibold ${isVisible ? 'text-[#6B5A45]' : 'text-gray-500'} truncate`}>
+            {item.effective_name}
+          </h3>
           {item.is_featured && (
             <span title="Destacado" className="inline-flex">
               <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-            </span>
-          )}
-          {item.is_hidden && (
-            <span title="Oculto del menú" className="inline-flex">
-              <EyeOff className="w-3.5 h-3.5 text-red-500" />
             </span>
           )}
           {item.family_effective_name && (
@@ -246,6 +277,27 @@ function ItemRow({ item, onEdit }) {
           </span>
         </div>
       </div>
+
+      {/* Quick visibility toggle */}
+      <button
+        onClick={onToggleVisibility}
+        disabled={isToggling}
+        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all flex-shrink-0 ${
+          isVisible
+            ? 'border-green-200 bg-green-50 text-green-700 hover:bg-green-100'
+            : 'border-gray-300 bg-gray-100 text-gray-500 hover:bg-gray-200'
+        } disabled:opacity-50 disabled:cursor-not-allowed`}
+        aria-label={isVisible ? 'Ocultar del menú' : 'Mostrar en el menú'}
+      >
+        {isToggling ? (
+          <div className="w-3.5 h-3.5 border-2 border-current border-t-transparent rounded-full animate-spin" />
+        ) : isVisible ? (
+          <Eye className="w-3.5 h-3.5" />
+        ) : (
+          <EyeOff className="w-3.5 h-3.5" />
+        )}
+        {isVisible ? 'Visible' : 'Oculto'}
+      </button>
 
       {/* Edit button */}
       <button
