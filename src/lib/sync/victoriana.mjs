@@ -98,6 +98,7 @@ async function syncDepartments(pool, supabase, push) {
   const rows = res.recordset.map((r) => ({
     codigo: r.C_CODIGO,
     nombre: r.C_DESCRIPCIO,
+    is_active: true,
     synced_at: now,
   }));
   const { error } = await supabase
@@ -106,20 +107,20 @@ async function syncDepartments(pool, supabase, push) {
   if (error) throw new Error(`upsert victoriana_department_cache: ${error.message}`);
   push(`   ✅ ${rows.length} sincronizados.`);
 
-  // Delete-stale: depts que ya no existen en el ERP. Meta y grupos huérfanos
-  // sobreviven (no hay FK CASCADE entre cache y meta; entre cache y cache de
-  // grupos sí sigue habiendo CASCADE, eso es OK porque si un dept se va, sus
-  // grupos también deben irse).
-  const currentCodes = new Set(rows.map((r) => r.codigo));
-  const cacheCodes = await fetchAllCachePks(supabase, 'victoriana_department_cache', 'codigo');
-  const stale = cacheCodes.filter((c) => !currentCodes.has(c));
-  if (stale.length > 0) {
-    const { error: delErr } = await supabase
+  // Soft-delete: depts que ya no aparecen en el ERP se marcan inactivos.
+  // Meta sobrevive (CASCADE no se dispara con UPDATE).
+  const currentCodes = rows.map((r) => r.codigo);
+  if (currentCodes.length > 0) {
+    const { data: deactivated, error: updErr } = await supabase
       .from('victoriana_department_cache')
-      .delete()
-      .in('codigo', stale);
-    if (delErr) throw new Error(`delete stale victoriana_department_cache: ${delErr.message}`);
-    push(`   🗑️  ${stale.length} departamentos eliminados del cache.`);
+      .update({ is_active: false })
+      .eq('is_active', true)
+      .not('codigo', 'in', `(${currentCodes.map((c) => `"${c}"`).join(',')})`)
+      .select('codigo');
+    if (updErr) throw new Error(`soft-delete victoriana_department_cache: ${updErr.message}`);
+    if (deactivated && deactivated.length > 0) {
+      push(`   💤 ${deactivated.length} departamentos marcados inactivos.`);
+    }
   }
 
   // Auto-seed meta (solo nuevos)
@@ -164,6 +165,7 @@ async function syncGroups(pool, supabase, push) {
     codigo: r.c_CODIGO,
     departamento_codigo: r.c_departamento,
     nombre: r.C_DESCRIPCIO,
+    is_active: true,
     synced_at: now,
   }));
 
@@ -180,25 +182,25 @@ async function syncGroups(pool, supabase, push) {
   }
   push(`   ✅ ${filtered.length} sincronizados.`);
 
-  // Delete-stale grupos. PK compuesta (codigo, departamento_codigo).
+  // Soft-delete: grupos que ya no aparecen en el ERP. PK compuesta —
+  // chequeamos uno por uno (pocos grupos, ~89).
   const currentKeys = new Set(filtered.map((r) => `${r.departamento_codigo}:${r.codigo}`));
   const { data: cacheGroups } = await supabase
     .from('victoriana_group_cache')
-    .select('codigo, departamento_codigo');
+    .select('codigo, departamento_codigo, is_active');
   const staleGroups = (cacheGroups || []).filter(
-    (g) => !currentKeys.has(`${g.departamento_codigo}:${g.codigo}`)
+    (g) => g.is_active !== false && !currentKeys.has(`${g.departamento_codigo}:${g.codigo}`)
   );
   if (staleGroups.length > 0) {
-    // Delete uno por uno con AND compuesto (mejor por API, son pocos)
     for (const g of staleGroups) {
-      const { error: delErr } = await supabase
+      const { error: updErr } = await supabase
         .from('victoriana_group_cache')
-        .delete()
+        .update({ is_active: false })
         .eq('codigo', g.codigo)
         .eq('departamento_codigo', g.departamento_codigo);
-      if (delErr) throw new Error(`delete stale group ${g.codigo}: ${delErr.message}`);
+      if (updErr) throw new Error(`soft-delete group ${g.codigo}: ${updErr.message}`);
     }
-    push(`   🗑️  ${staleGroups.length} grupos eliminados del cache.`);
+    push(`   💤 ${staleGroups.length} grupos marcados inactivos.`);
   }
 
   // Auto-seed meta
@@ -267,6 +269,7 @@ async function syncProducts(pool, supabase, push) {
     final_price: calcFinalPrice(r.n_Precio1, r.n_Impuesto1),
     departamento_codigo: r.c_Departamento,
     grupo_codigo: r.c_Grupo,
+    is_active: true,
     synced_at: now,
   }));
 
@@ -284,21 +287,22 @@ async function syncProducts(pool, supabase, push) {
   }
   push(`   ✅ ${filtered.length} productos sincronizados.`);
 
-  // Delete-stale productos. Meta sobrevive — si el producto se reactiva,
-  // recupera descripción gourmet, imagen, flags.
-  const currentCodes = new Set(filtered.map((r) => r.codigo));
+  // Soft-delete: productos que ya no aparecen en el ERP. Meta sobrevive
+  // (CASCADE no se dispara con UPDATE). Si el producto se reactiva,
+  // is_active vuelve a TRUE y recupera su descripción/imagen/flags.
+  const currentSet = new Set(filtered.map((r) => r.codigo));
   const cacheCodes = await fetchAllCachePks(supabase, 'victoriana_product_cache', 'codigo');
-  const stale = cacheCodes.filter((c) => !currentCodes.has(c));
+  const stale = cacheCodes.filter((c) => !currentSet.has(c));
   if (stale.length > 0) {
     for (let i = 0; i < stale.length; i += 500) {
       const batch = stale.slice(i, i + 500);
-      const { error: delErr } = await supabase
+      const { error: updErr } = await supabase
         .from('victoriana_product_cache')
-        .delete()
+        .update({ is_active: false })
         .in('codigo', batch);
-      if (delErr) throw new Error(`delete stale victoriana_product_cache: ${delErr.message}`);
+      if (updErr) throw new Error(`soft-delete victoriana_product_cache: ${updErr.message}`);
     }
-    push(`   🗑️  ${stale.length} productos eliminados del cache (no estaban en Victoriana).`);
+    push(`   💤 ${stale.length} productos marcados inactivos.`);
   }
 
   return filtered.length;

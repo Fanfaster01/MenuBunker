@@ -30,7 +30,8 @@ export async function GET(_request, { params }) {
         sort_order,
         bunker_family_cache:family_id (
           family_name,
-          family_status_id
+          family_status_id,
+          is_active
         )
       `)
       .eq('slug', slug)
@@ -41,7 +42,13 @@ export async function GET(_request, { params }) {
       return NextResponse.json({ error: 'Error al obtener la categoría' }, { status: 500 });
     }
 
-    if (!meta || !meta.is_visible_on_menu || meta.bunker_family_cache?.family_status_id !== 1) {
+    // Categoría debe estar visible (admin), habilitada en Xetux Y activa (no soft-deleted por sync)
+    if (
+      !meta ||
+      !meta.is_visible_on_menu ||
+      meta.bunker_family_cache?.family_status_id !== 1 ||
+      meta.bunker_family_cache?.is_active === false
+    ) {
       return NextResponse.json({ error: `Categoría '${slug}' no encontrada` }, { status: 404 });
     }
 
@@ -78,7 +85,8 @@ export async function GET(_request, { params }) {
           sort_order
         )
       `)
-      .eq('default_family_id', meta.family_id);
+      .eq('default_family_id', meta.family_id)
+      .eq('is_active', true);
 
     if (itemsErr) {
       console.error(`[GET /api/menu/${slug}] items error:`, itemsErr.message);

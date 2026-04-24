@@ -47,6 +47,7 @@ export async function GET(request, { params }) {
       `, { count: 'exact' })
       .eq('departamento_codigo', dept.codigo)
       .eq('grupo_codigo', group.codigo)
+      .eq('is_active', true)
       .order('descri', { ascending: true })
       .range(from, to);
 

@@ -118,6 +118,7 @@ async function syncFamilies(pool, supabase, push) {
     family_parent_id: r.family_parent_id,
     family_position: r.family_position,
     family_status_id: r.family_status_id,
+    is_active: true, // todas las familias presentes en este sync se marcan activas
     synced_at: now,
   }));
 
@@ -127,20 +128,21 @@ async function syncFamilies(pool, supabase, push) {
   if (error) throw new Error(`upsert bunker_family_cache: ${error.message}`);
   push(`   ✅ ${rows.length} familias sincronizadas.`);
 
-  // Delete-stale: borrar familias del cache que ya no existen en el ERP.
-  // Meta sobrevive (no hay FK CASCADE), por si la familia vuelve.
-  const currentIds = new Set(rows.map((r) => r.family_id));
-  const { data: cacheIds } = await supabase.from('bunker_family_cache').select('family_id');
-  const stale = (cacheIds || [])
-    .map((c) => c.family_id)
-    .filter((id) => !currentIds.has(id));
-  if (stale.length > 0) {
-    const { error: delErr } = await supabase
+  // Soft-delete: marcar como inactivas las familias que ya no aparecen en Xetux.
+  // No hacemos DELETE para preservar la metadata (RLS CASCADE no se dispara con UPDATE).
+  // Si la familia vuelve, automáticamente is_active=true en el próximo sync.
+  const currentIds = rows.map((r) => r.family_id);
+  if (currentIds.length > 0) {
+    const { data: deactivated, error: updErr } = await supabase
       .from('bunker_family_cache')
-      .delete()
-      .in('family_id', stale);
-    if (delErr) throw new Error(`delete stale bunker_family_cache: ${delErr.message}`);
-    push(`   🗑️  ${stale.length} familias eliminadas del cache (no estaban en Xetux).`);
+      .update({ is_active: false })
+      .eq('is_active', true)
+      .not('family_id', 'in', `(${currentIds.join(',')})`)
+      .select('family_id');
+    if (updErr) throw new Error(`soft-delete bunker_family_cache: ${updErr.message}`);
+    if (deactivated && deactivated.length > 0) {
+      push(`   💤 ${deactivated.length} familias marcadas inactivas (no estaban en Xetux).`);
+    }
   }
 
   // Auto-seed meta rows (solo para familias nuevas)
@@ -222,6 +224,7 @@ async function syncItems(pool, supabase, push) {
       visible_for_web: r.visible_for_web === 1,
       allows_sale: r.allows_sale === 1,
       product_position: r.product_position,
+      is_active: true,
       synced_at: now,
     });
   }
@@ -239,31 +242,38 @@ async function syncItems(pool, supabase, push) {
   }
   push(`   ✅ ${filteredRows.length} items sincronizados.`);
 
-  // Delete-stale: items que están en cache pero ya no en el fetch
-  // (eliminados/desactivados en Xetux). Meta sobrevive — si el item se
-  // reactiva, automáticamente se vuelve a asociar con su descripción/imagen.
-  const currentIds = new Set(filteredRows.map((r) => r.xetux_item_id));
-  const cacheIds = await fetchAllCachePks(supabase, 'bunker_item_cache', 'xetux_item_id');
-  const stale = cacheIds.filter((id) => !currentIds.has(id));
-  if (stale.length > 0) {
-    // Borrar en lotes (Supabase / PostgREST tiene límites en .in())
-    for (let i = 0; i < stale.length; i += 500) {
-      const batch = stale.slice(i, i + 500);
-      const { error: delErr } = await supabase
+  // Soft-delete: items que están en cache pero ya no en el fetch
+  // (eliminados/desactivados en Xetux). NO los borramos para preservar la
+  // metadata editada por el admin (descripción gourmet, imagen, etc.). Si
+  // el item se reactiva, vuelve a is_active=true automáticamente.
+  const currentIds = filteredRows.map((r) => r.xetux_item_id);
+  if (currentIds.length > 0) {
+    // Soft-delete por chunks porque .not('in', ...) es un único string
+    // y PostgREST tiene límites de longitud de URL.
+    let totalDeactivated = 0;
+    const CHUNK = 1000;
+    const cacheIds = await fetchAllCachePks(supabase, 'bunker_item_cache', 'xetux_item_id');
+    const currentSet = new Set(currentIds);
+    const stale = cacheIds.filter((id) => !currentSet.has(id));
+    for (let i = 0; i < stale.length; i += CHUNK) {
+      const batch = stale.slice(i, i + CHUNK);
+      const { error: updErr } = await supabase
         .from('bunker_item_cache')
-        .delete()
+        .update({ is_active: false })
         .in('xetux_item_id', batch);
-      if (delErr) throw new Error(`delete stale bunker_item_cache: ${delErr.message}`);
+      if (updErr) throw new Error(`soft-delete bunker_item_cache: ${updErr.message}`);
+      totalDeactivated += batch.length;
     }
-    push(`   🗑️  ${stale.length} items eliminados del cache (no estaban en Xetux).`);
+    if (totalDeactivated > 0) {
+      push(`   💤 ${totalDeactivated} items marcados inactivos (no estaban en Xetux).`);
+    }
   }
 
   return filteredRows.length;
 }
 
 /**
- * Pagina toda la lista de PKs de una tabla cache.
- * Necesario porque PostgREST tiene límite default de 1000 rows.
+ * Pagina toda la lista de PKs. Necesario porque PostgREST trunca a 1000 rows.
  */
 async function fetchAllCachePks(supabase, tableName, pkColumn) {
   const CHUNK = 1000;

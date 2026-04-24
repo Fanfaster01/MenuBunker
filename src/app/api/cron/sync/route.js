@@ -3,8 +3,8 @@ export const runtime = 'nodejs';
 export const maxDuration = 300; // 5 min — Vercel Pro permite hasta 300s
 
 import { NextResponse } from 'next/server';
-import { runXetuxSync } from '@/lib/sync/xetux';
-import { runVictorianaSync } from '@/lib/sync/victoriana';
+import { runXetuxSync } from '@/lib/sync/xetux.mjs';
+import { runVictorianaSync } from '@/lib/sync/victoriana.mjs';
 
 /**
  * GET /api/cron/sync

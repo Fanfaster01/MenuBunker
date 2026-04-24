@@ -2,8 +2,8 @@
 
 import { revalidatePath } from 'next/cache';
 import { requireAdmin } from '@/lib/adminAuth';
-import { runXetuxSync } from '@/lib/sync/xetux';
-import { runVictorianaSync } from '@/lib/sync/victoriana';
+import { runXetuxSync } from '@/lib/sync/xetux.mjs';
+import { runVictorianaSync } from '@/lib/sync/victoriana.mjs';
 
 /**
  * Server Action disparada por el botón "Sincronizar ahora" del admin.

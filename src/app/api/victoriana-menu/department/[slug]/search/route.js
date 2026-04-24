@@ -42,6 +42,7 @@ export async function GET(request, { params }) {
         meta:victoriana_product_meta (description, image_url, override_name, is_featured, is_hidden)
       `, { count: 'exact' })
       .eq('departamento_codigo', dept.codigo)
+      .eq('is_active', true)
       .ilike('descri', pattern)
       .order('descri', { ascending: true })
       .range(from, to);

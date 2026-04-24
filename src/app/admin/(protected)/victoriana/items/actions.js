@@ -2,7 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 import { requireAdmin } from '@/lib/adminAuth';
-import { getSupabaseAdmin } from '@/lib/supabaseAdmin';
+import { getSupabaseAdmin } from '@/lib/supabaseAdmin.mjs';
 
 const BUCKET = 'victoriana-items';
 const MAX_UPLOAD_BYTES = 6 * 1024 * 1024;
