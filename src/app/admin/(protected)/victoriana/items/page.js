@@ -91,7 +91,7 @@ export default async function AdminVictorianaItemsPage() {
             <span className="text-base">🗑️</span>
             <span>
               <strong>{deletedFromErp}</strong> producto{deletedFromErp === 1 ? '' : 's'} eliminado{deletedFromErp === 1 ? '' : 's'}{' '}
-              de Victoriana. Filtra "Eliminados del ERP" para revisar y borrar definitivamente.
+              de Victoriana. Filtra «Eliminados del ERP» para revisar y borrar definitivamente.
             </span>
           </div>
         )}

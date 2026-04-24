@@ -59,7 +59,7 @@ export default async function AdminBunkerItemsPage() {
             <span className="text-base">🗑️</span>
             <span>
               <strong>{deletedFromErp}</strong> item{deletedFromErp === 1 ? '' : 's'} eliminado{deletedFromErp === 1 ? '' : 's'}{' '}
-              de Xetux. Filtra "Eliminados del ERP" para revisarlos y borrarlos definitivamente.
+              de Xetux. Filtra «Eliminados del ERP» para revisarlos y borrarlos definitivamente.
             </span>
           </div>
         )}
