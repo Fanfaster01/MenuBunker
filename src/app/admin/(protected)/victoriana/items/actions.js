@@ -141,10 +141,11 @@ export async function deleteProductPermanently(codigo) {
     };
   }
 
+  const admin = getSupabaseAdmin();
+
   // Borrar imagen del Storage si existe
   const imageUrl = row.meta?.[0]?.image_url || row.meta?.image_url || null;
   if (imageUrl) {
-    const admin = getSupabaseAdmin();
     const marker = `/object/public/${BUCKET}/`;
     const idx = imageUrl.indexOf(marker);
     const path = idx >= 0 ? decodeURIComponent(imageUrl.substring(idx + marker.length)) : null;
@@ -153,12 +154,17 @@ export async function deleteProductPermanently(codigo) {
     }
   }
 
-  const { error: delErr } = await supabase
+  // DELETE con admin client (service_role) — las tablas *_cache no tienen
+  // policy RLS de DELETE para usuario autenticado.
+  const { error: delErr, count } = await admin
     .from('victoriana_product_cache')
-    .delete()
+    .delete({ count: 'exact' })
     .eq('codigo', codigo);
 
   if (delErr) return { ok: false, error: delErr.message };
+  if (count === 0) {
+    return { ok: false, error: 'No se borró ninguna fila (verifica permisos RLS).' };
+  }
 
   revalidatePath('/admin/victoriana/items');
   return { ok: true, deletedName: row.descri };

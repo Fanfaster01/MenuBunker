@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { Pencil, Image as ImageIcon, FileText, Star, Eye, EyeOff, Search, X, Package, AlertTriangle, Trash2 } from 'lucide-react';
 import { updateItemMeta, removeItemImage, deleteItemPermanently } from '../actions';
@@ -11,6 +12,7 @@ import ItemEditModal from './ItemEditModal';
  * Lista densa de items con búsqueda + filtro por familia + filtro de estado.
  */
 export default function ItemList({ items, families }) {
+  const router = useRouter();
   const [editing, setEditing] = useState(null);
   const [toggling, setToggling] = useState(new Set()); // xetux_item_ids in-flight
   const [flash, setFlash] = useState(null);
@@ -79,6 +81,7 @@ export default function ItemList({ items, families }) {
       showFlash('error', result.error || 'No se pudo borrar');
     } else {
       showFlash('success', `"${result.deletedName}" eliminado definitivamente`);
+      router.refresh(); // fuerza re-render del Server Component → item desaparece de la lista
     }
   }
 

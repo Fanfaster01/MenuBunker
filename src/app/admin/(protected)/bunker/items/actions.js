@@ -179,10 +179,11 @@ export async function deleteItemPermanently(xetuxItemId) {
     };
   }
 
+  const admin = getSupabaseAdmin();
+
   // Borrar imagen del Storage si existe (antes del CASCADE)
   const imageUrl = row.image_url?.[0]?.image_url || row.image_url?.image_url || null;
   if (imageUrl) {
-    const admin = getSupabaseAdmin();
     const path = extractStoragePathFromUrl(imageUrl, BUCKET);
     if (path) {
       await admin.storage.from(BUCKET).remove([path]).catch(() => {
@@ -191,13 +192,20 @@ export async function deleteItemPermanently(xetuxItemId) {
     }
   }
 
-  // DELETE en cache → CASCADE borra meta automáticamente
-  const { error: delErr } = await supabase
+  // DELETE en cache → CASCADE borra meta automáticamente.
+  // Usamos admin client (service_role) porque las tablas *_cache no tienen
+  // policy RLS para DELETE con usuario autenticado: solo el service_role puede
+  // mutarlas. La autorización se garantiza vía requireAdmin() + guard is_active
+  // arriba.
+  const { error: delErr, count } = await admin
     .from('bunker_item_cache')
-    .delete()
+    .delete({ count: 'exact' })
     .eq('xetux_item_id', xetuxItemId);
 
   if (delErr) return { ok: false, error: delErr.message };
+  if (count === 0) {
+    return { ok: false, error: 'No se borró ninguna fila (verifica permisos RLS).' };
+  }
 
   revalidatePath('/admin/bunker/items');
   return { ok: true, deletedName: row.item_name };

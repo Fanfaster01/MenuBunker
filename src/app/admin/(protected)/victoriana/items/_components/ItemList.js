@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { Pencil, Image as ImageIcon, FileText, Star, Eye, EyeOff, Search, X, Package, AlertTriangle, Trash2 } from 'lucide-react';
 import { updateProductMeta, removeProductImage, deleteProductPermanently } from '../actions';
@@ -10,6 +11,7 @@ import ItemEditModal from './ItemEditModal';
 const PAGE_SIZE = 100;
 
 export default function ItemList({ items, departments, groups }) {
+  const router = useRouter();
   const [editing, setEditing] = useState(null);
   const [toggling, setToggling] = useState(new Set()); // codigos in-flight
   const [flash, setFlash] = useState(null);
@@ -101,6 +103,7 @@ export default function ItemList({ items, departments, groups }) {
       showFlash('error', result.error || 'No se pudo borrar');
     } else {
       showFlash('success', `"${result.deletedName}" eliminado definitivamente`);
+      router.refresh();
     }
   }
 
