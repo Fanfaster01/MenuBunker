@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 import { requireAdmin } from '@/lib/adminAuth';
+import { getSupabaseAdmin } from '@/lib/supabaseAdmin.mjs';
 
 /**
  * Actualiza la metadata de una familia Bunker.
@@ -73,4 +74,61 @@ export async function updateFamilyMeta(familyId, input) {
   revalidatePath('/bunker-restaurant/[slug]', 'page');
 
   return { ok: true };
+}
+
+/**
+ * Borra DEFINITIVAMENTE una familia del cache.
+ *
+ * Solo permitido para familias con `is_active = false` (el sync detectó que
+ * ya no existen en Xetux). El CASCADE FK borra también su metadata.
+ *
+ * Items asociados (bunker_item_cache.default_family_id): la FK tiene
+ * ON DELETE SET NULL, así que los items quedan sin familia (huérfanos),
+ * pero NO se borran. Si el item también ya está inactivo, el admin puede
+ * borrarlo aparte desde /admin/bunker/items.
+ *
+ * Usa admin client (service_role) porque las tablas *_cache no permiten
+ * DELETE a usuarios autenticados.
+ */
+export async function deleteFamilyPermanently(familyId) {
+  await requireAdmin();
+
+  if (!familyId || typeof familyId !== 'number') {
+    return { ok: false, error: 'family_id inválido' };
+  }
+
+  const admin = getSupabaseAdmin();
+
+  // Guard: solo familias inactivas
+  const { data: row, error: fetchErr } = await admin
+    .from('bunker_family_cache')
+    .select('family_id, family_name, is_active')
+    .eq('family_id', familyId)
+    .maybeSingle();
+
+  if (fetchErr) return { ok: false, error: fetchErr.message };
+  if (!row) return { ok: false, error: 'Familia no encontrada' };
+  if (row.is_active !== false) {
+    return {
+      ok: false,
+      error: 'Solo se pueden borrar definitivamente familias marcadas como «Eliminadas del ERP».',
+    };
+  }
+
+  // DELETE → CASCADE borra meta. Items quedan con default_family_id = NULL.
+  const { error: delErr, count } = await admin
+    .from('bunker_family_cache')
+    .delete({ count: 'exact' })
+    .eq('family_id', familyId);
+
+  if (delErr) return { ok: false, error: delErr.message };
+  if (count === 0) {
+    return { ok: false, error: 'No se borró ninguna fila (verifica permisos RLS).' };
+  }
+
+  revalidatePath('/admin/bunker/familias');
+  revalidatePath('/admin/bunker/items');
+  revalidatePath('/bunker-restaurant');
+
+  return { ok: true, deletedName: row.family_name };
 }

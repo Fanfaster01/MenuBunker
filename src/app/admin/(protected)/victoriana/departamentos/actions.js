@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 import { requireAdmin } from '@/lib/adminAuth';
+import { getSupabaseAdmin } from '@/lib/supabaseAdmin.mjs';
 
 /**
  * Actualiza la metadata de un departamento Victoriana.
@@ -67,4 +68,56 @@ export async function updateDepartmentMeta(codigo, input) {
   revalidatePath('/la-victoriana/[slug]', 'page');
 
   return { ok: true };
+}
+
+/**
+ * Borra DEFINITIVAMENTE un departamento del cache.
+ *
+ * ⚠️ IMPORTANTE: el FK victoriana_group_cache.departamento_codigo CASCADEa,
+ * así que borrar un dept también borra TODOS sus grupos (y el meta de cada uno).
+ * Los productos quedan huérfanos (no FK), pero como las views públicas filtran
+ * por la cadena dept→grupo→producto via JOIN, dejan de mostrarse automáticamente.
+ *
+ * Solo permitido si is_active=false.
+ */
+export async function deleteDepartmentPermanently(codigo) {
+  await requireAdmin();
+
+  if (!codigo || typeof codigo !== 'string') {
+    return { ok: false, error: 'codigo inválido' };
+  }
+
+  const admin = getSupabaseAdmin();
+
+  const { data: row, error: fetchErr } = await admin
+    .from('victoriana_department_cache')
+    .select('codigo, nombre, is_active')
+    .eq('codigo', codigo)
+    .maybeSingle();
+
+  if (fetchErr) return { ok: false, error: fetchErr.message };
+  if (!row) return { ok: false, error: 'Departamento no encontrado' };
+  if (row.is_active !== false) {
+    return {
+      ok: false,
+      error: 'Solo se pueden borrar definitivamente departamentos marcados como «Eliminados del ERP».',
+    };
+  }
+
+  const { error: delErr, count } = await admin
+    .from('victoriana_department_cache')
+    .delete({ count: 'exact' })
+    .eq('codigo', codigo);
+
+  if (delErr) return { ok: false, error: delErr.message };
+  if (count === 0) {
+    return { ok: false, error: 'No se borró ninguna fila (verifica permisos RLS).' };
+  }
+
+  revalidatePath('/admin/victoriana/departamentos');
+  revalidatePath('/admin/victoriana/grupos');
+  revalidatePath('/admin/victoriana/items');
+  revalidatePath('/la-victoriana');
+
+  return { ok: true, deletedName: row.nombre };
 }

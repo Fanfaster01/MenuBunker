@@ -27,18 +27,34 @@ export default async function AdminBunkerFamiliasPage() {
   }
 
   const families = data ?? [];
-  const visibleCount = families.filter((f) => f.is_visible_on_menu).length;
-  const hiddenCount = families.length - visibleCount;
+  const activeFamilies = families.filter((f) => f.is_active !== false);
+  const visibleCount = activeFamilies.filter((f) => f.is_visible_on_menu).length;
+  const hiddenByMe = activeFamilies.filter((f) => !f.is_visible_on_menu).length;
+  const deletedFromErp = families.filter((f) => f.is_active === false).length;
 
   return (
     <div>
-      <header className="mb-6 flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-[#6B5A45]">Bunker · Familias</h1>
-          <p className="text-sm text-gray-600 mt-1">
-            {families.length} familias habilitadas en Xetux · {visibleCount} visibles en el menú · {hiddenCount} ocultas
-          </p>
-        </div>
+      <header className="mb-6">
+        <h1 className="text-2xl sm:text-3xl font-bold text-[#6B5A45]">Bunker · Familias</h1>
+        <p className="text-sm text-gray-600 mt-1 flex flex-wrap gap-x-4 gap-y-1">
+          <span>{activeFamilies.length} familias activas</span>
+          <span>·</span>
+          <span><strong>{visibleCount}</strong> visibles</span>
+          {hiddenByMe > 0 && (
+            <span className="text-amber-700">
+              <strong>{hiddenByMe}</strong> ocultas por ti
+            </span>
+          )}
+        </p>
+        {deletedFromErp > 0 && (
+          <div className="mt-3 rounded-xl bg-red-50 border border-red-200 px-4 py-2.5 text-sm text-red-800 flex items-center gap-2">
+            <span className="text-base">🗑️</span>
+            <span>
+              <strong>{deletedFromErp}</strong> familia{deletedFromErp === 1 ? '' : 's'} eliminada{deletedFromErp === 1 ? '' : 's'} de
+              Xetux. Filtra «Eliminadas del ERP» para revisar y borrar definitivamente.
+            </span>
+          </div>
+        )}
       </header>
 
       <FamilyList families={families} />

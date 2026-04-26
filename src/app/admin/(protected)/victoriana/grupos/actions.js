@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 import { requireAdmin } from '@/lib/adminAuth';
+import { getSupabaseAdmin } from '@/lib/supabaseAdmin.mjs';
 
 /**
  * Actualiza la metadata de un grupo Victoriana.
@@ -65,4 +66,59 @@ export async function updateGroupMeta(codigo, departamento_codigo, input) {
   revalidatePath('/la-victoriana/[slug]/[groupSlug]', 'page');
 
   return { ok: true };
+}
+
+/**
+ * Borra DEFINITIVAMENTE un grupo del cache.
+ *
+ * Solo permitido si is_active=false. CASCADE borra su meta. Productos asociados
+ * (victoriana_product_cache.grupo_codigo) quedan huérfanos pero no se borran;
+ * dejan de aparecer en el menú público porque las views filtran por JOIN.
+ *
+ * PK compuesta (codigo, departamento_codigo).
+ */
+export async function deleteGroupPermanently(codigo, departamento_codigo) {
+  await requireAdmin();
+
+  if (!codigo || typeof codigo !== 'string') {
+    return { ok: false, error: 'codigo inválido' };
+  }
+  if (!departamento_codigo || typeof departamento_codigo !== 'string') {
+    return { ok: false, error: 'departamento_codigo requerido' };
+  }
+
+  const admin = getSupabaseAdmin();
+
+  const { data: row, error: fetchErr } = await admin
+    .from('victoriana_group_cache')
+    .select('codigo, departamento_codigo, nombre, is_active')
+    .eq('codigo', codigo)
+    .eq('departamento_codigo', departamento_codigo)
+    .maybeSingle();
+
+  if (fetchErr) return { ok: false, error: fetchErr.message };
+  if (!row) return { ok: false, error: 'Grupo no encontrado' };
+  if (row.is_active !== false) {
+    return {
+      ok: false,
+      error: 'Solo se pueden borrar definitivamente grupos marcados como «Eliminados del ERP».',
+    };
+  }
+
+  const { error: delErr, count } = await admin
+    .from('victoriana_group_cache')
+    .delete({ count: 'exact' })
+    .eq('codigo', codigo)
+    .eq('departamento_codigo', departamento_codigo);
+
+  if (delErr) return { ok: false, error: delErr.message };
+  if (count === 0) {
+    return { ok: false, error: 'No se borró ninguna fila (verifica permisos RLS).' };
+  }
+
+  revalidatePath('/admin/victoriana/grupos');
+  revalidatePath('/admin/victoriana/items');
+  revalidatePath('/la-victoriana');
+
+  return { ok: true, deletedName: row.nombre };
 }

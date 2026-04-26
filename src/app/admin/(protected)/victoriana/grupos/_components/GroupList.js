@@ -1,8 +1,9 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { Eye, EyeOff, Pencil, Package, Search, X } from 'lucide-react';
-import { updateGroupMeta } from '../actions';
+import { useRouter } from 'next/navigation';
+import { Eye, EyeOff, Pencil, Package, Search, X, AlertTriangle, Trash2 } from 'lucide-react';
+import { updateGroupMeta, deleteGroupPermanently } from '../actions';
 import GroupEditModal from './GroupEditModal';
 
 /**
@@ -14,6 +15,7 @@ function groupKey(g) {
 }
 
 export default function GroupList({ groups, departments }) {
+  const router = useRouter();
   const [editing, setEditing] = useState(null);
   const [toggling, setToggling] = useState(new Set());
   const [flash, setFlash] = useState(null);
@@ -35,9 +37,10 @@ export default function GroupList({ groups, departments }) {
       list = list.filter((g) => g.departamento_codigo === deptFilter);
     }
 
-    if (statusFilter === 'visible') list = list.filter((g) => g.is_visible_on_menu);
-    else if (statusFilter === 'hidden') list = list.filter((g) => !g.is_visible_on_menu);
-    else if (statusFilter === 'empty') list = list.filter((g) => g.product_count === 0);
+    if (statusFilter === 'visible') list = list.filter((g) => g.is_visible_on_menu && g.is_active !== false);
+    else if (statusFilter === 'hidden-by-me') list = list.filter((g) => !g.is_visible_on_menu && g.is_active !== false);
+    else if (statusFilter === 'empty') list = list.filter((g) => g.product_count === 0 && g.is_active !== false);
+    else if (statusFilter === 'deleted-from-erp') list = list.filter((g) => g.is_active === false);
 
     return list;
   }, [groups, query, deptFilter, statusFilter]);
@@ -71,6 +74,35 @@ export default function GroupList({ groups, departments }) {
       setEditing(null);
     }
     return result;
+  }
+
+  async function deletePermanently(group) {
+    const productNote =
+      group.product_count > 0
+        ? `\n\nEste grupo tenía ${group.product_count} ${group.product_count === 1 ? 'producto' : 'productos'} asociados. Quedarán huérfanos en el caché (no aparecerán en el menú público), pero no se borran. Puedes limpiarlos aparte desde Victoriana · Items.`
+        : '';
+    const confirmed = window.confirm(
+      `¿Borrar definitivamente «${group.effective_name}»?\n\n` +
+        `Este grupo ya no está en La Victoriana. Al borrarlo se elimina del caché y su metadata.${productNote}\n\n` +
+        `Esta acción no se puede deshacer.`
+    );
+    if (!confirmed) return;
+
+    const key = groupKey(group);
+    setToggling((prev) => new Set(prev).add(key));
+    const result = await deleteGroupPermanently(group.codigo, group.departamento_codigo);
+    setToggling((prev) => {
+      const next = new Set(prev);
+      next.delete(key);
+      return next;
+    });
+
+    if (!result.ok) {
+      showFlash('error', result.error || 'No se pudo borrar');
+    } else {
+      showFlash('success', `«${result.deletedName}» eliminado definitivamente`);
+      router.refresh();
+    }
   }
 
   function showFlash(type, message) {
@@ -134,8 +166,9 @@ export default function GroupList({ groups, departments }) {
           >
             <option value="all">Todos los estados</option>
             <option value="visible">Visibles</option>
-            <option value="hidden">Ocultos</option>
+            <option value="hidden-by-me">Ocultos por mí</option>
             <option value="empty">Sin productos</option>
+            <option value="deleted-from-erp">🗑️ Eliminados del ERP</option>
           </select>
 
           {hasActiveFilters && (
@@ -165,21 +198,36 @@ export default function GroupList({ groups, departments }) {
               const key = groupKey(g);
               const isToggling = toggling.has(key);
               const isVisible = !!g.is_visible_on_menu;
+              const isDeletedFromErp = g.is_active === false;
+
+              let rowBg = 'bg-white hover:bg-red-50/30';
+              if (isDeletedFromErp) {
+                rowBg = 'bg-red-50/40 hover:bg-red-50/60 border-l-4 border-l-red-300';
+              } else if (!isVisible) {
+                rowBg = 'bg-gray-50/70 hover:bg-red-50/30';
+              }
 
               return (
-                <li
-                  key={key}
-                  className={`p-4 transition-colors ${isVisible ? 'bg-white' : 'bg-gray-50/70'} hover:bg-red-50/30`}
-                >
+                <li key={key} className={`p-4 transition-colors ${rowBg}`}>
                   <div className="flex items-center gap-3 flex-wrap sm:flex-nowrap">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <h3 className={`font-semibold ${isVisible ? 'text-[#6B5A45]' : 'text-gray-500'} truncate`}>
+                        <h3
+                          className={`font-semibold truncate ${
+                            isDeletedFromErp ? 'text-red-700 line-through' : isVisible ? 'text-[#6B5A45]' : 'text-gray-500'
+                          }`}
+                        >
                           {g.effective_name}
                         </h3>
-                        {g.display_name && g.display_name !== g.raw_name && (
+                        {!isDeletedFromErp && g.display_name && g.display_name !== g.raw_name && (
                           <span className="text-[10px] font-mono text-gray-400 uppercase tracking-wider">
                             (ERP: {g.raw_name})
+                          </span>
+                        )}
+                        {isDeletedFromErp && (
+                          <span className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded bg-red-100 text-red-800 font-bold uppercase tracking-wide">
+                            <AlertTriangle className="w-3 h-3" />
+                            Eliminado del ERP
                           </span>
                         )}
                         <span className="text-[10px] px-1.5 py-0.5 rounded bg-[#C8A882]/15 text-[#8B7355] font-medium">
@@ -196,32 +244,50 @@ export default function GroupList({ groups, departments }) {
                       </div>
                     </div>
 
-                    <button
-                      onClick={() => toggleVisibility(g)}
-                      disabled={isToggling}
-                      className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all ${
-                        isVisible
-                          ? 'border-green-200 bg-green-50 text-green-700 hover:bg-green-100'
-                          : 'border-gray-300 bg-gray-100 text-gray-500 hover:bg-gray-200'
-                      } disabled:opacity-50`}
-                    >
-                      {isToggling ? (
-                        <div className="w-3.5 h-3.5 border-2 border-current border-t-transparent rounded-full animate-spin" />
-                      ) : isVisible ? (
-                        <Eye className="w-3.5 h-3.5" />
-                      ) : (
-                        <EyeOff className="w-3.5 h-3.5" />
-                      )}
-                      {isVisible ? 'Visible' : 'Oculto'}
-                    </button>
+                    {isDeletedFromErp ? (
+                      <button
+                        onClick={() => deletePermanently(g)}
+                        disabled={isToggling}
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border border-red-300 bg-red-50 text-red-700 hover:bg-red-100 transition-all flex-shrink-0 disabled:opacity-50 disabled:cursor-not-allowed"
+                        title="Borrar este grupo del caché y su metadata"
+                      >
+                        {isToggling ? (
+                          <div className="w-3.5 h-3.5 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                        ) : (
+                          <Trash2 className="w-3.5 h-3.5" />
+                        )}
+                        Borrar
+                      </button>
+                    ) : (
+                      <>
+                        <button
+                          onClick={() => toggleVisibility(g)}
+                          disabled={isToggling}
+                          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all ${
+                            isVisible
+                              ? 'border-green-200 bg-green-50 text-green-700 hover:bg-green-100'
+                              : 'border-gray-300 bg-gray-100 text-gray-500 hover:bg-gray-200'
+                          } disabled:opacity-50`}
+                        >
+                          {isToggling ? (
+                            <div className="w-3.5 h-3.5 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                          ) : isVisible ? (
+                            <Eye className="w-3.5 h-3.5" />
+                          ) : (
+                            <EyeOff className="w-3.5 h-3.5" />
+                          )}
+                          {isVisible ? 'Visible' : 'Oculto'}
+                        </button>
 
-                    <button
-                      onClick={() => setEditing(g)}
-                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border border-[#C8A882]/50 bg-white text-[#8B7355] hover:bg-[#C8A882]/10 transition-colors"
-                    >
-                      <Pencil className="w-3.5 h-3.5" />
-                      Editar
-                    </button>
+                        <button
+                          onClick={() => setEditing(g)}
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border border-[#C8A882]/50 bg-white text-[#8B7355] hover:bg-[#C8A882]/10 transition-colors"
+                        >
+                          <Pencil className="w-3.5 h-3.5" />
+                          Editar
+                        </button>
+                      </>
+                    )}
                   </div>
                 </li>
               );
