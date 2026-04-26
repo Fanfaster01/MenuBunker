@@ -3,33 +3,26 @@
 import { useEffect, useState } from 'react';
 import { X } from 'lucide-react';
 
+// Parent monta el modal condicionalmente con key compuesto para reiniciar
+// state via useState initializer en cada apertura.
 export default function GroupEditModal({ group, onClose, onSave }) {
-  const [values, setValues] = useState(null);
+  const [values, setValues] = useState(() => ({
+    display_name: group.display_name ?? '',
+    description: group.description ?? '',
+    slug: group.slug ?? '',
+    sort_order: group.sort_order ?? 0,
+    is_visible_on_menu: !!group.is_visible_on_menu,
+  }));
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (!group) return;
-    setValues({
-      display_name: group.display_name ?? '',
-      description: group.description ?? '',
-      slug: group.slug ?? '',
-      sort_order: group.sort_order ?? 0,
-      is_visible_on_menu: !!group.is_visible_on_menu,
-    });
-    setError(null);
-  }, [group]);
-
-  useEffect(() => {
-    if (!group) return;
     function onKey(e) {
       if (e.key === 'Escape' && !saving) onClose();
     }
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [group, onClose, saving]);
-
-  if (!group || !values) return null;
+  }, [onClose, saving]);
 
   async function handleSubmit(e) {
     e.preventDefault();

@@ -276,7 +276,14 @@ export default function FamilyList({ families }) {
         )}
       </div>
 
-      <FamilyEditModal family={editing} onClose={() => setEditing(null)} onSave={handleSave} />
+      {editing && (
+        <FamilyEditModal
+          key={editing.family_id}
+          family={editing}
+          onClose={() => setEditing(null)}
+          onSave={handleSave}
+        />
+      )}
     </>
   );
 }

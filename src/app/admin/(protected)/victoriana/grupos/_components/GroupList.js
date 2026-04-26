@@ -296,7 +296,14 @@ export default function GroupList({ groups, departments }) {
         )}
       </div>
 
-      <GroupEditModal group={editing} onClose={() => setEditing(null)} onSave={handleSave} />
+      {editing && (
+        <GroupEditModal
+          key={`${editing.departamento_codigo}:${editing.codigo}`}
+          group={editing}
+          onClose={() => setEditing(null)}
+          onSave={handleSave}
+        />
+      )}
     </>
   );
 }

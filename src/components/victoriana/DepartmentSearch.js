@@ -24,12 +24,12 @@ export default function DepartmentSearch({ deptSlug, deptName, children }) {
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
     const q = query.trim();
-    if (q.length < 2) {
-      setState({ status: 'idle', items: [], total: 0, error: null });
-      return;
-    }
-    setState((s) => ({ ...s, status: 'loading' }));
+    // Si la query es muy corta no mostramos resultados (isSearching === false → render
+    // de children). Dejamos el state previo intacto en lugar de resetear sync, para
+    // evitar el setState-in-effect-body que React 19.2 marca como cascada.
+    if (q.length < 2) return;
     debounceRef.current = setTimeout(async () => {
+      setState((s) => ({ ...s, status: 'loading' }));
       try {
         const url = `/api/victoriana-menu/department/${encodeURIComponent(deptSlug)}/search?q=${encodeURIComponent(q)}&limit=40`;
         const res = await fetch(url);

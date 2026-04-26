@@ -6,36 +6,29 @@ import { X, Upload, Trash2, Loader2, Package, Star } from 'lucide-react';
 import { compressImage } from '@/lib/imageUpload';
 import { uploadProductImage } from '../actions';
 
+// Parent monta el modal condicionalmente con key={item.codigo} para reiniciar
+// state via useState initializer en cada apertura.
 export default function ItemEditModal({ item, onClose, onSave, onRemoveImage }) {
-  const [values, setValues] = useState(null);
+  const [values, setValues] = useState(() => ({
+    override_name: item.override_name ?? '',
+    description: item.custom_description ?? '',
+    image_url: item.image_url ?? null,
+    is_featured: !!item.is_featured,
+    is_hidden: !!item.is_hidden,
+    notes: item.notes ?? '',
+  }));
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState(null);
   const fileInputRef = useRef(null);
 
   useEffect(() => {
-    if (!item) return;
-    setValues({
-      override_name: item.override_name ?? '',
-      description: item.custom_description ?? '',
-      image_url: item.image_url ?? null,
-      is_featured: !!item.is_featured,
-      is_hidden: !!item.is_hidden,
-      notes: item.notes ?? '',
-    });
-    setError(null);
-  }, [item]);
-
-  useEffect(() => {
-    if (!item) return;
     function onKey(e) {
       if (e.key === 'Escape' && !saving && !uploading) onClose();
     }
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [item, onClose, saving, uploading]);
-
-  if (!item || !values) return null;
+  }, [onClose, saving, uploading]);
 
   function setField(key, val) {
     setValues((v) => ({ ...v, [key]: val }));

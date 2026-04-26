@@ -285,12 +285,15 @@ export default function ItemList({ items, departments, groups }) {
         </div>
       )}
 
-      <ItemEditModal
-        item={editing}
-        onClose={() => setEditing(null)}
-        onSave={handleSave}
-        onRemoveImage={handleRemoveImage}
-      />
+      {editing && (
+        <ItemEditModal
+          key={editing.codigo}
+          item={editing}
+          onClose={() => setEditing(null)}
+          onSave={handleSave}
+          onRemoveImage={handleRemoveImage}
+        />
+      )}
     </>
   );
 }

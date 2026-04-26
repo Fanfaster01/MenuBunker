@@ -7,34 +7,27 @@ import { X } from 'lucide-react';
  * Modal para editar la metadata de un departamento Victoriana.
  * Props: department (o null), onClose, onSave(codigo, patch).
  */
+// Parent monta el modal condicionalmente con key={dept.codigo} para reiniciar
+// state via useState initializer en cada apertura.
 export default function DepartmentEditModal({ department, onClose, onSave }) {
-  const [values, setValues] = useState(null);
+  const [values, setValues] = useState(() => ({
+    display_name: department.display_name ?? '',
+    description: department.description ?? '',
+    notice: department.notice ?? '',
+    slug: department.slug ?? '',
+    sort_order: department.sort_order ?? 0,
+    is_visible_on_menu: !!department.is_visible_on_menu,
+  }));
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (!department) return;
-    setValues({
-      display_name: department.display_name ?? '',
-      description: department.description ?? '',
-      notice: department.notice ?? '',
-      slug: department.slug ?? '',
-      sort_order: department.sort_order ?? 0,
-      is_visible_on_menu: !!department.is_visible_on_menu,
-    });
-    setError(null);
-  }, [department]);
-
-  useEffect(() => {
-    if (!department) return;
     function onKey(e) {
       if (e.key === 'Escape' && !saving) onClose();
     }
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [department, onClose, saving]);
-
-  if (!department || !values) return null;
+  }, [onClose, saving]);
 
   async function handleSubmit(e) {
     e.preventDefault();

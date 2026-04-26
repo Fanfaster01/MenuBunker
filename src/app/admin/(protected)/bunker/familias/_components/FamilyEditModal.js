@@ -7,40 +7,32 @@ import { X } from 'lucide-react';
  * Modal para editar la metadata de una familia.
  *
  * Props:
- *   family: objeto con la data actual, o null cuando está cerrado
+ *   family: objeto con la data actual (NUNCA null — el parent monta el modal
+ *           condicionalmente con key={family.family_id} para que cada apertura
+ *           reinicie el state via useState initializer)
  *   onClose: cerrar sin guardar
  *   onSave(familyId, patch): async, retorna { ok, error? }
  */
 export default function FamilyEditModal({ family, onClose, onSave }) {
-  const [values, setValues] = useState(null);
+  const [values, setValues] = useState(() => ({
+    display_name: family.display_name ?? '',
+    description: family.description ?? '',
+    notice: family.notice ?? '',
+    slug: family.slug ?? '',
+    sort_order: family.sort_order ?? 0,
+    is_visible_on_menu: !!family.is_visible_on_menu,
+  }));
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
 
-  // Resetear los valores cuando cambia la familia que se está editando
-  useEffect(() => {
-    if (!family) return;
-    setValues({
-      display_name: family.display_name ?? '',
-      description: family.description ?? '',
-      notice: family.notice ?? '',
-      slug: family.slug ?? '',
-      sort_order: family.sort_order ?? 0,
-      is_visible_on_menu: !!family.is_visible_on_menu,
-    });
-    setError(null);
-  }, [family]);
-
   // Cerrar con ESC
   useEffect(() => {
-    if (!family) return;
     function onKey(e) {
       if (e.key === 'Escape' && !saving) onClose();
     }
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [family, onClose, saving]);
-
-  if (!family || !values) return null;
+  }, [onClose, saving]);
 
   async function handleSubmit(e) {
     e.preventDefault();

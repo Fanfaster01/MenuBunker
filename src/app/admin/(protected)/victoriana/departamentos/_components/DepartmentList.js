@@ -201,7 +201,14 @@ export default function DepartmentList({ departments }) {
         <div className="text-center py-12 text-gray-500">No hay departamentos en la DB.</div>
       )}
 
-      <DepartmentEditModal department={editing} onClose={() => setEditing(null)} onSave={handleSave} />
+      {editing && (
+        <DepartmentEditModal
+          key={editing.codigo}
+          department={editing}
+          onClose={() => setEditing(null)}
+          onSave={handleSave}
+        />
+      )}
     </>
   );
 }

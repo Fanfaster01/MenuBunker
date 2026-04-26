@@ -2,14 +2,15 @@ import { NextResponse } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
 
 /**
- * Middleware que refresca la sesión de Supabase en cada request a /admin/*.
+ * Proxy (antes "middleware") que refresca la sesión de Supabase en cada request
+ * a /admin/*. En Next 16+ el archivo se llama proxy.js y exporta `proxy`.
  *
  * Esto es necesario porque los Server Components no pueden escribir cookies,
- * así que el middleware es el encargado de mantener el JWT vigente.
+ * así que el proxy es el encargado de mantener el JWT vigente.
  *
- * Para rutas NO admin, el middleware sale temprano sin tocar nada.
+ * Para rutas NO admin, el proxy sale temprano sin tocar nada.
  */
-export async function middleware(request) {
+export async function proxy(request) {
   // Solo refrescar sesión en /admin/*. Si agregamos más rutas auth, expandir acá.
   if (!request.nextUrl.pathname.startsWith('/admin')) {
     return NextResponse.next();
