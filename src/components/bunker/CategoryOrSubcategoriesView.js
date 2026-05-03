@@ -59,7 +59,7 @@ export default function CategoryOrSubcategoriesView({ slug }) {
   if (state.status === 'loading') {
     const prettyTitle = slug.replace(/-/g, ' ').toUpperCase();
     return (
-      <div className="min-h-screen bg-gradient-to-b from-white via-white to-[#FAF5EA] text-gray-900 p-4">
+      <div className="min-h-screen bg-linear-to-b from-white via-white to-[#FAF5EA] text-gray-900 p-4">
         <Header title={prettyTitle} />
         <CategoryGridSkeleton count={6} />
         <Footer />
@@ -103,7 +103,7 @@ export default function CategoryOrSubcategoriesView({ slug }) {
   const parent = state.data.parent;
   const backHref = state.data.backHref || '/bunker-restaurant';
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white via-white to-[#FAF5EA] text-gray-900 p-4">
+    <div className="min-h-screen bg-linear-to-b from-white via-white to-[#FAF5EA] text-gray-900 p-4">
       <Header title={parent.name.toUpperCase()} backHref={backHref} />
 
       <div className="max-w-4xl mx-auto mb-5 flex justify-end items-center">
@@ -118,9 +118,9 @@ export default function CategoryOrSubcategoriesView({ slug }) {
             href={`/bunker-restaurant/${child.slug}`}
             key={child.slug}
             style={{ animationDelay: `${idx * 30}ms` }}
-            className="fade-in-up group relative overflow-hidden bg-white rounded-2xl p-5 border border-[#C8A882]/60 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex items-center justify-between gap-3 min-h-24"
+            className="fade-in-up group relative overflow-hidden bg-white rounded-2xl p-5 border border-[#C8A882]/60 shadow-xs hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex items-center justify-between gap-3 min-h-24"
           >
-            <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-[#C8A882]/0 via-[#C8A882]/0 to-[#C8A882]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            <div className="pointer-events-none absolute inset-0 bg-linear-to-br from-[#C8A882]/0 via-[#C8A882]/0 to-[#C8A882]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
             <div className="relative flex-1 text-left">
               <h3 className="font-bold text-base md:text-lg text-[#8B7355] group-hover:text-[#6B5A45] transition-colors uppercase tracking-wide">

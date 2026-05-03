@@ -13,7 +13,7 @@ export default function TaskSchedulerGuide() {
   const [expanded, setExpanded] = useState(false);
 
   return (
-    <section className="mt-6 bg-white rounded-2xl shadow-sm border border-[#C8A882]/30 overflow-hidden">
+    <section className="mt-6 bg-white rounded-2xl shadow-xs border border-[#C8A882]/30 overflow-hidden">
       <button
         onClick={() => setExpanded((v) => !v)}
         className="w-full flex items-center justify-between gap-3 px-5 py-4 hover:bg-amber-50/40 transition-colors text-left"
@@ -38,7 +38,7 @@ export default function TaskSchedulerGuide() {
         <div className="px-5 pb-6 pt-2 space-y-5 border-t border-gray-100">
           {/* Context */}
           <div className="flex gap-3 rounded-xl bg-emerald-50 border border-emerald-200 p-3">
-            <Info className="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5" />
+            <Info className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
             <div className="text-sm text-emerald-900 leading-snug">
               <p className="font-semibold mb-0.5">Cómo funciona</p>
               <p className="text-xs">
@@ -128,7 +128,7 @@ function Section({ title, icon, children }) {
 
 function Code({ children }) {
   return (
-    <code className="px-1.5 py-0.5 rounded bg-gray-100 text-[#8B7355] font-mono text-[11px] whitespace-nowrap">
+    <code className="px-1.5 py-0.5 rounded-sm bg-gray-100 text-[#8B7355] font-mono text-[11px] whitespace-nowrap">
       {children}
     </code>
   );
@@ -140,7 +140,7 @@ function EnvList({ vars }) {
       <ul className="divide-y divide-gray-100">
         {vars.map((v) => (
           <li key={v.k} className="flex items-center gap-3 px-3 py-2 text-xs">
-            <code className="font-mono font-semibold text-[#8B7355] flex-shrink-0">{v.k}</code>
+            <code className="font-mono font-semibold text-[#8B7355] shrink-0">{v.k}</code>
             <span className="flex-1 text-gray-600 truncate">{v.note}</span>
             {v.ok && (
               <span className="inline-flex items-center gap-1 text-[10px] text-emerald-700 font-semibold">
@@ -172,7 +172,7 @@ function CopyableBlock({ value, className = '' }) {
       <span className="break-all">{value}</span>
       <button
         onClick={copy}
-        className="absolute top-1.5 right-1.5 p-1.5 rounded bg-gray-800 hover:bg-gray-700 text-gray-300 transition-colors"
+        className="absolute top-1.5 right-1.5 p-1.5 rounded-sm bg-gray-800 hover:bg-gray-700 text-gray-300 transition-colors"
         aria-label="Copiar"
         title="Copiar al portapapeles"
       >

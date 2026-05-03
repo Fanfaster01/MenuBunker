@@ -78,16 +78,16 @@ export default async function AdminDashboard() {
           <Link
             key={s.href}
             href={s.href}
-            className="group relative bg-white rounded-2xl shadow-sm border border-[#C8A882]/30 p-6 hover:shadow-lg hover:border-[#C8A882]/60 hover:-translate-y-0.5 transition-all overflow-hidden"
+            className="group relative bg-white rounded-2xl shadow-xs border border-[#C8A882]/30 p-6 hover:shadow-lg hover:border-[#C8A882]/60 hover:-translate-y-0.5 transition-all overflow-hidden"
           >
             {/* Gradient accent */}
             <div
-              className={`absolute -top-6 -right-6 w-24 h-24 rounded-full bg-gradient-to-br ${s.color} opacity-20 group-hover:opacity-40 transition-opacity`}
+              className={`absolute -top-6 -right-6 w-24 h-24 rounded-full bg-linear-to-br ${s.color} opacity-20 group-hover:opacity-40 transition-opacity`}
             />
 
             <div className="relative">
               <div
-                className={`inline-flex items-center justify-center w-11 h-11 rounded-xl bg-gradient-to-br ${s.color} text-white mb-4 shadow-md`}
+                className={`inline-flex items-center justify-center w-11 h-11 rounded-xl bg-linear-to-br ${s.color} text-white mb-4 shadow-md`}
               >
                 <s.icon className="w-5 h-5" />
               </div>

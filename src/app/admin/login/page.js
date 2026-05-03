@@ -67,7 +67,7 @@ function LoginForm() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-orange-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-linear-to-br from-amber-50 via-white to-orange-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="flex justify-center mb-8">
@@ -112,7 +112,7 @@ function LoginForm() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="tu@email.com"
-                  className="w-full px-4 py-2.5 rounded-xl border border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#C8A882] focus:border-transparent transition-all disabled:opacity-50"
+                  className="w-full px-4 py-2.5 rounded-xl border border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 focus:outline-hidden focus:ring-2 focus:ring-[#C8A882] focus:border-transparent transition-all disabled:opacity-50"
                 />
               </div>
 
@@ -125,7 +125,7 @@ function LoginForm() {
               <button
                 type="submit"
                 disabled={status === 'loading' || !email.trim()}
-                className="w-full bg-gradient-to-r from-[#C8A882] to-[#8B7355] text-white font-semibold py-2.5 rounded-xl hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full bg-linear-to-r from-[#C8A882] to-[#8B7355] text-white font-semibold py-2.5 rounded-xl hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {status === 'loading' ? 'Enviando...' : 'Enviar link mágico'}
               </button>
@@ -144,7 +144,7 @@ function LoginForm() {
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-orange-50" />}>
+    <Suspense fallback={<div className="min-h-screen bg-linear-to-br from-amber-50 via-white to-orange-50" />}>
       <LoginForm />
     </Suspense>
   );

@@ -119,7 +119,7 @@ export default function FamilyList({ families }) {
       )}
 
       {/* Filter bar */}
-      <div className="bg-white rounded-2xl shadow-sm border border-[#C8A882]/30 p-4 mb-4">
+      <div className="bg-white rounded-2xl shadow-xs border border-[#C8A882]/30 p-4 mb-4">
         <div className="flex flex-wrap gap-3 items-center">
           <div className="flex-1 min-w-[220px] relative">
             <Search className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
@@ -128,14 +128,14 @@ export default function FamilyList({ families }) {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Buscar por nombre…"
-              className="w-full pl-9 pr-3 py-2 rounded-lg border border-gray-300 text-sm text-gray-900 focus:outline-none focus:border-[#C8A882] focus:ring-2 focus:ring-[#C8A882]/20"
+              className="w-full pl-9 pr-3 py-2 rounded-lg border border-gray-300 text-sm text-gray-900 focus:outline-hidden focus:border-[#C8A882] focus:ring-2 focus:ring-[#C8A882]/20"
             />
           </div>
 
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="py-2 px-3 rounded-lg border border-gray-300 bg-white text-sm text-gray-900 focus:outline-none focus:border-[#C8A882]"
+            className="py-2 px-3 rounded-lg border border-gray-300 bg-white text-sm text-gray-900 focus:outline-hidden focus:border-[#C8A882]"
           >
             <option value="all">Todos los estados</option>
             <option value="visible">Visibles en el menú</option>
@@ -159,7 +159,7 @@ export default function FamilyList({ families }) {
         </div>
       </div>
 
-      <div className="bg-white rounded-2xl shadow-sm border border-[#C8A882]/30 overflow-hidden">
+      <div className="bg-white rounded-2xl shadow-xs border border-[#C8A882]/30 overflow-hidden">
         {filteredFamilies.length === 0 ? (
           <div className="text-center py-16 text-gray-500">
             {hasActiveFilters ? 'Ninguna familia coincide con los filtros.' : 'No hay familias habilitadas en Xetux.'}
@@ -196,13 +196,13 @@ export default function FamilyList({ families }) {
                           </span>
                         )}
                         {isDeletedFromErp && (
-                          <span className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded bg-red-100 text-red-800 font-bold uppercase tracking-wide">
+                          <span className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded-sm bg-red-100 text-red-800 font-bold uppercase tracking-wide">
                             <AlertTriangle className="w-3 h-3" />
                             Eliminada del ERP
                           </span>
                         )}
                         {!isDeletedFromErp && f.parent_name && f.parent_name !== 'RAIZ' && (
-                          <span className="text-[10px] px-1.5 py-0.5 rounded bg-[#C8A882]/15 text-[#8B7355] font-medium">
+                          <span className="text-[10px] px-1.5 py-0.5 rounded-sm bg-[#C8A882]/15 text-[#8B7355] font-medium">
                             {f.parent_name}
                           </span>
                         )}
@@ -226,7 +226,7 @@ export default function FamilyList({ families }) {
                       <button
                         onClick={() => deletePermanently(f)}
                         disabled={isToggling}
-                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border border-red-300 bg-red-50 text-red-700 hover:bg-red-100 transition-all flex-shrink-0 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border border-red-300 bg-red-50 text-red-700 hover:bg-red-100 transition-all shrink-0 disabled:opacity-50 disabled:cursor-not-allowed"
                         aria-label="Borrar definitivamente"
                         title="Borrar esta familia del caché y su metadata"
                       >

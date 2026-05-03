@@ -38,7 +38,7 @@ export default function DepartmentView({ slug }) {
 
   if (state.status === 'loading') {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-black via-black to-[#0c0c0c] text-white p-4">
+      <div className="min-h-screen bg-linear-to-b from-black via-black to-[#0c0c0c] text-white p-4">
         <VictorianaHeader title={title} backHref="/la-victoriana" />
         <DepartmentGridSkeleton count={6} />
         <VictorianaFooter />
@@ -59,11 +59,11 @@ export default function DepartmentView({ slug }) {
   const { department, groups } = state.data;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-black via-black to-[#0c0c0c] text-white p-4">
+    <div className="min-h-screen bg-linear-to-b from-black via-black to-[#0c0c0c] text-white p-4">
       <VictorianaHeader title={department.name.toUpperCase()} backHref="/la-victoriana" />
 
       {department.notice && (
-        <div className="max-w-4xl mx-auto mb-6 flex gap-3 p-4 bg-gradient-to-r from-[#1a1a1a] to-[#0c0c0c] border-l-4 border-[#C8302E] rounded-r-lg shadow-md">
+        <div className="max-w-4xl mx-auto mb-6 flex gap-3 p-4 bg-linear-to-r from-[#1a1a1a] to-[#0c0c0c] border-l-4 border-[#C8302E] rounded-r-lg shadow-md">
           <Info className="w-5 h-5 text-[#C8302E] shrink-0 mt-0.5" />
           <p className="text-sm text-gray-300 leading-relaxed">
             <span className="font-semibold text-[#C8A882]">Importante:</span> {department.notice}
@@ -86,7 +86,7 @@ export default function DepartmentView({ slug }) {
               style={{ animationDelay: `${idx * 25}ms` }}
               className="fade-in-up group relative overflow-hidden bg-gray-900 rounded-2xl p-5 border border-[#C8A882]/40 shadow-lg hover:shadow-xl hover:-translate-y-1 hover:border-[#C8302E] transition-all duration-300 flex items-center justify-between gap-3 min-h-24"
             >
-              <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-[#C8302E]/0 via-[#C8302E]/0 to-[#C8302E]/15 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <div className="pointer-events-none absolute inset-0 bg-linear-to-br from-[#C8302E]/0 via-[#C8302E]/0 to-[#C8302E]/15 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
               <div className="relative flex-1 text-left">
                 <h3 className="font-bold text-base md:text-lg text-white group-hover:text-[#C8A882] transition-colors uppercase tracking-wide">

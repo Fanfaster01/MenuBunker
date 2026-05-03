@@ -151,7 +151,7 @@ export default function ItemList({ items, families }) {
       )}
 
       {/* Filter bar */}
-      <div className="bg-white rounded-2xl shadow-sm border border-[#C8A882]/30 p-4 mb-4">
+      <div className="bg-white rounded-2xl shadow-xs border border-[#C8A882]/30 p-4 mb-4">
         <div className="flex flex-wrap gap-3 items-center">
           {/* Search */}
           <div className="flex-1 min-w-[220px] relative">
@@ -161,7 +161,7 @@ export default function ItemList({ items, families }) {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Buscar por nombre o ID…"
-              className="w-full pl-9 pr-3 py-2 rounded-lg border border-gray-300 text-sm text-gray-900 focus:outline-none focus:border-[#C8A882] focus:ring-2 focus:ring-[#C8A882]/20"
+              className="w-full pl-9 pr-3 py-2 rounded-lg border border-gray-300 text-sm text-gray-900 focus:outline-hidden focus:border-[#C8A882] focus:ring-2 focus:ring-[#C8A882]/20"
             />
           </div>
 
@@ -169,7 +169,7 @@ export default function ItemList({ items, families }) {
           <select
             value={familyFilter}
             onChange={(e) => setFamilyFilter(e.target.value)}
-            className="py-2 px-3 rounded-lg border border-gray-300 bg-white text-sm text-gray-900 focus:outline-none focus:border-[#C8A882]"
+            className="py-2 px-3 rounded-lg border border-gray-300 bg-white text-sm text-gray-900 focus:outline-hidden focus:border-[#C8A882]"
           >
             <option value="all">Todas las familias</option>
             <option value="none">— Sin familia</option>
@@ -184,7 +184,7 @@ export default function ItemList({ items, families }) {
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="py-2 px-3 rounded-lg border border-gray-300 bg-white text-sm text-gray-900 focus:outline-none focus:border-[#C8A882]"
+            className="py-2 px-3 rounded-lg border border-gray-300 bg-white text-sm text-gray-900 focus:outline-hidden focus:border-[#C8A882]"
           >
             <option value="all">Todos los estados</option>
             <option value="no-image">Sin imagen</option>
@@ -211,7 +211,7 @@ export default function ItemList({ items, families }) {
       </div>
 
       {/* Items list */}
-      <div className="bg-white rounded-2xl shadow-sm border border-[#C8A882]/30 overflow-hidden">
+      <div className="bg-white rounded-2xl shadow-xs border border-[#C8A882]/30 overflow-hidden">
         {filteredItems.length === 0 ? (
           <div className="text-center py-16 text-gray-500">
             {hasActiveFilters ? 'Ningún item coincide con los filtros.' : 'No hay items.'}
@@ -263,7 +263,7 @@ function ItemRow({ item, isToggling, onEdit, onToggleVisibility, onDeletePermane
   return (
     <li className={`p-3 sm:p-4 flex items-center gap-3 transition-colors ${rowBg}`}>
       {/* Thumbnail */}
-      <div className="relative w-12 h-12 sm:w-14 sm:h-14 rounded-lg overflow-hidden border border-gray-200 bg-gray-100 flex-shrink-0">
+      <div className="relative w-12 h-12 sm:w-14 sm:h-14 rounded-lg overflow-hidden border border-gray-200 bg-gray-100 shrink-0">
         {hasImage ? (
           <Image src={item.image_url} alt={item.effective_name} fill sizes="56px" className="object-cover" unoptimized />
         ) : (
@@ -289,13 +289,13 @@ function ItemRow({ item, isToggling, onEdit, onToggleVisibility, onDeletePermane
             </span>
           )}
           {isDeletedFromErp && (
-            <span className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded bg-red-100 text-red-800 font-bold uppercase tracking-wide">
+            <span className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded-sm bg-red-100 text-red-800 font-bold uppercase tracking-wide">
               <AlertTriangle className="w-3 h-3" />
               Eliminado del ERP
             </span>
           )}
           {item.family_effective_name && (
-            <span className="text-[10px] px-1.5 py-0.5 rounded bg-[#C8A882]/15 text-[#8B7355] font-medium">
+            <span className="text-[10px] px-1.5 py-0.5 rounded-sm bg-[#C8A882]/15 text-[#8B7355] font-medium">
               {item.family_effective_name}
             </span>
           )}
@@ -319,7 +319,7 @@ function ItemRow({ item, isToggling, onEdit, onToggleVisibility, onDeletePermane
         <button
           onClick={onDeletePermanently}
           disabled={isToggling}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border border-red-300 bg-red-50 text-red-700 hover:bg-red-100 transition-all flex-shrink-0 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border border-red-300 bg-red-50 text-red-700 hover:bg-red-100 transition-all shrink-0 disabled:opacity-50 disabled:cursor-not-allowed"
           aria-label="Borrar definitivamente"
           title="Borrar este item del caché y su metadata"
         >
@@ -336,7 +336,7 @@ function ItemRow({ item, isToggling, onEdit, onToggleVisibility, onDeletePermane
           <button
             onClick={onToggleVisibility}
             disabled={isToggling}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all flex-shrink-0 ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all shrink-0 ${
               isVisible
                 ? 'border-green-200 bg-green-50 text-green-700 hover:bg-green-100'
                 : 'border-gray-300 bg-gray-100 text-gray-500 hover:bg-gray-200'
@@ -356,7 +356,7 @@ function ItemRow({ item, isToggling, onEdit, onToggleVisibility, onDeletePermane
           {/* Edit button */}
           <button
             onClick={onEdit}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border border-[#C8A882]/50 bg-white text-[#8B7355] hover:bg-[#C8A882]/10 transition-colors flex-shrink-0"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border border-[#C8A882]/50 bg-white text-[#8B7355] hover:bg-[#C8A882]/10 transition-colors shrink-0"
           >
             <Pencil className="w-3.5 h-3.5" />
             Editar

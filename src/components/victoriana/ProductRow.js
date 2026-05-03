@@ -9,7 +9,7 @@ export default function ProductRow({ item, index = 0 }) {
   return (
     <article
       style={{ animationDelay: `${Math.min(index * 15, 300)}ms` }}
-      className="fade-in-up group bg-gray-900 rounded-xl p-4 border border-[#C8A882]/40 shadow-sm hover:shadow-md hover:border-[#C8302E]/60 transition-all"
+      className="fade-in-up group bg-gray-900 rounded-xl p-4 border border-[#C8A882]/40 shadow-xs hover:shadow-md hover:border-[#C8302E]/60 transition-all"
     >
       <div className="flex justify-between items-start gap-3">
         <div className="flex-1 min-w-0">

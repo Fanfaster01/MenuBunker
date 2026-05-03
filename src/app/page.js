@@ -19,14 +19,14 @@ export default function Home() {
   ];
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-orange-50 text-black p-4">
+    <main className="min-h-screen bg-linear-to-br from-amber-50 via-white to-orange-50 text-black p-4">
       {/* Header Section */}
       <div className="text-center mb-12 pt-8">
         <div className="mb-6">
-          <h1 className="text-6xl md:text-7xl font-bold bg-gradient-to-r from-[#C8A882] to-[#8B7355] bg-clip-text text-transparent mb-4">
+          <h1 className="text-6xl md:text-7xl font-bold bg-linear-to-r from-[#C8A882] to-[#8B7355] bg-clip-text text-transparent mb-4">
           
           </h1>
-          <div className="w-24 h-1 bg-gradient-to-r from-[#C8A882] to-[#8B7355] mx-auto rounded-full"></div>
+          <div className="w-24 h-1 bg-linear-to-r from-[#C8A882] to-[#8B7355] mx-auto rounded-full"></div>
         </div>
         <p className="text-xl text-gray-700 font-medium">Descubre los productos y opciones gastronómicas que tenemos para tí</p>
       </div>
@@ -38,13 +38,13 @@ export default function Home() {
             href={section.path} 
             key={section.path}
             className={section.logo === 'victoriana' ? 
-              "relative bg-gradient-to-br from-black to-gray-900 shadow-2xl rounded-2xl p-10 border-2 border-[#C8A882] hover:shadow-3xl hover:border-[#C8302E] hover:-translate-y-2 transition-all duration-500 text-center group overflow-hidden" :
-              "relative bg-gradient-to-br from-white to-gray-50 shadow-2xl rounded-2xl p-10 border-2 border-[#C8A882] hover:shadow-3xl hover:border-[#8B7355] hover:-translate-y-2 transition-all duration-500 text-center text-black group overflow-hidden"
+              "relative bg-linear-to-br from-black to-gray-900 shadow-2xl rounded-2xl p-10 border-2 border-[#C8A882] hover:shadow-3xl hover:border-[#C8302E] hover:-translate-y-2 transition-all duration-500 text-center group overflow-hidden" :
+              "relative bg-linear-to-br from-white to-gray-50 shadow-2xl rounded-2xl p-10 border-2 border-[#C8A882] hover:shadow-3xl hover:border-[#8B7355] hover:-translate-y-2 transition-all duration-500 text-center text-black group overflow-hidden"
             }
           >
             {/* Decorative elements */}
-            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-[#C8A882]/20 to-transparent rounded-full -mr-16 -mt-16"></div>
-            <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-[#8B7355]/20 to-transparent rounded-full -ml-12 -mb-12"></div>
+            <div className="absolute top-0 right-0 w-32 h-32 bg-linear-to-br from-[#C8A882]/20 to-transparent rounded-full -mr-16 -mt-16"></div>
+            <div className="absolute bottom-0 left-0 w-24 h-24 bg-linear-to-tr from-[#8B7355]/20 to-transparent rounded-full -ml-12 -mb-12"></div>
             
             {/* Logo Container */}
             {section.logo === 'bunker' ? (
@@ -93,7 +93,7 @@ export default function Home() {
 
       {/* Footer */}
       <footer className="text-center py-10">
-        <div className="w-16 h-1 bg-gradient-to-r from-[#C8A882] to-[#8B7355] mx-auto rounded-full mb-5"></div>
+        <div className="w-16 h-1 bg-linear-to-r from-[#C8A882] to-[#8B7355] mx-auto rounded-full mb-5"></div>
         <p className="text-gray-600 font-medium">
           &copy; {new Date().getFullYear()} Menú Digital. Todos los derechos reservados.
         </p>
@@ -101,7 +101,7 @@ export default function Home() {
           <span>Hecho con</span>
           <span className="text-[#C8302E] animate-pulse" aria-hidden="true">♥</span>
           <span>por</span>
-          <span className="font-semibold bg-gradient-to-r from-[#C8A882] to-[#8B7355] bg-clip-text text-transparent">
+          <span className="font-semibold bg-linear-to-r from-[#C8A882] to-[#8B7355] bg-clip-text text-transparent">
             Lumen
           </span>
           <span className="text-gray-400">·</span>

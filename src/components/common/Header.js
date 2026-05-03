@@ -14,7 +14,7 @@ export default function Header({ title, backHref = '/bunker-restaurant' }) {
       <div className="flex items-center justify-between w-full max-w-4xl mx-auto">
         <Link
           href={backHref}
-          className="flex items-center justify-center w-11 h-11 rounded-full bg-white border border-[#C8A882]/50 text-[#8B7355] hover:bg-[#C8A882]/10 hover:border-[#8B7355] hover:scale-105 transition-all duration-200 shadow-sm"
+          className="flex items-center justify-center w-11 h-11 rounded-full bg-white border border-[#C8A882]/50 text-[#8B7355] hover:bg-[#C8A882]/10 hover:border-[#8B7355] hover:scale-105 transition-all duration-200 shadow-xs"
           aria-label="Volver"
         >
           <ArrowLeft className="w-5 h-5" />

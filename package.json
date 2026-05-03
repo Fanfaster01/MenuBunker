@@ -19,12 +19,13 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
+    "@tailwindcss/postcss": "^4.2.4",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "eslint": "^9.30.1",
     "eslint-config-next": "^16.2.4",
     "postcss": "^8.5.6",
-    "tailwindcss": "^3.4.17"
+    "tailwindcss": "^4.2.4"
   },
   "optionalDependencies": {
     "@next/swc-win32-x64-msvc": "^16.2.4"

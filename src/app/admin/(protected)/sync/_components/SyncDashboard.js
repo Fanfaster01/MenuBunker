@@ -36,7 +36,7 @@ export default function SyncDashboard({ bunker, victoriana }) {
       </div>
 
       {/* Global sync button */}
-      <div className="mb-6 flex flex-wrap items-center justify-between gap-3 bg-white rounded-2xl shadow-sm border border-[#C8A882]/30 p-4">
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-3 bg-white rounded-2xl shadow-xs border border-[#C8A882]/30 p-4">
         <div>
           <p className="text-sm font-semibold text-[#6B5A45]">Sincronizar ambos a la vez</p>
           <p className="text-xs text-gray-500 mt-0.5">Corre Xetux seguido de La Victoriana (~30-60 seg total)</p>
@@ -44,7 +44,7 @@ export default function SyncDashboard({ bunker, victoriana }) {
         <button
           onClick={() => handleRun('all')}
           disabled={running !== null}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl font-semibold text-sm text-white bg-gradient-to-r from-[#8B7355] to-[#C8302E] hover:shadow-md transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl font-semibold text-sm text-white bg-linear-to-r from-[#8B7355] to-[#C8302E] hover:shadow-md transition-all disabled:opacity-60 disabled:cursor-not-allowed"
         >
           {running === 'all' ? (
             <>
@@ -72,9 +72,9 @@ function StatusCard({ status, onSync, disabled, running }) {
   const isFresh = freshness.staleness === 'fresh';
 
   return (
-    <div className="relative bg-white rounded-2xl shadow-sm border border-[#C8A882]/30 p-5 overflow-hidden">
+    <div className="relative bg-white rounded-2xl shadow-xs border border-[#C8A882]/30 p-5 overflow-hidden">
       {/* Accent stripe */}
-      <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${status.color}`} />
+      <div className={`absolute top-0 left-0 right-0 h-1 bg-linear-to-r ${status.color}`} />
 
       <div className="flex items-start justify-between gap-3 mb-3">
         <div>
@@ -121,7 +121,7 @@ function ResultsPanel({ results }) {
   const hasAnyOutput = results.runs?.some((r) => r.stdout || r.stderr);
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-[#C8A882]/30 overflow-hidden">
+    <div className="bg-white rounded-2xl shadow-xs border border-[#C8A882]/30 overflow-hidden">
       {/* Summary */}
       <div
         className={`px-5 py-4 flex items-center gap-3 border-b ${
@@ -129,9 +129,9 @@ function ResultsPanel({ results }) {
         }`}
       >
         {results.ok ? (
-          <CheckCircle2 className="w-5 h-5 text-green-600 flex-shrink-0" />
+          <CheckCircle2 className="w-5 h-5 text-green-600 shrink-0" />
         ) : (
-          <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0" />
+          <AlertCircle className="w-5 h-5 text-red-600 shrink-0" />
         )}
         <div className="flex-1 min-w-0">
           <p className={`text-sm font-semibold ${results.ok ? 'text-green-900' : 'text-red-900'}`}>

@@ -31,7 +31,7 @@ export default function BunkerRestaurantHome() {
   }, []);
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-white via-white to-[#FAF5EA] text-black p-4">
+    <main className="min-h-screen bg-linear-to-b from-white via-white to-[#FAF5EA] text-black p-4">
       <div className="max-w-sm mx-auto mb-8 pt-4">
         <BunkerLogo className="w-full h-auto text-[#C8A882]" width="300" height="120" />
       </div>
@@ -39,7 +39,7 @@ export default function BunkerRestaurantHome() {
       <div className="flex justify-center mb-10">
         <Link
           href="/"
-          className="group relative bg-gradient-to-r from-[#8B7355] to-[#6B5A45] text-white px-8 py-3 rounded-full transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 font-medium"
+          className="group relative bg-linear-to-r from-[#8B7355] to-[#6B5A45] text-white px-8 py-3 rounded-full transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 font-medium"
         >
           <span className="flex items-center">
             <span className="mr-2 transition-transform duration-300 group-hover:-translate-x-1">←</span>
@@ -68,10 +68,10 @@ export default function BunkerRestaurantHome() {
               href={`/bunker-restaurant/${item.slug}`}
               key={item.slug}
               style={{ animationDelay: `${idx * 40}ms` }}
-              className="fade-in-up group relative overflow-hidden bg-white rounded-2xl p-6 border border-[#C8A882]/60 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-center text-center min-h-32"
+              className="fade-in-up group relative overflow-hidden bg-white rounded-2xl p-6 border border-[#C8A882]/60 shadow-xs hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-center text-center min-h-32"
             >
               {/* Decorative gradient */}
-              <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-[#C8A882]/0 via-[#C8A882]/0 to-[#C8A882]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <div className="pointer-events-none absolute inset-0 bg-linear-to-br from-[#C8A882]/0 via-[#C8A882]/0 to-[#C8A882]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
               {/* Content */}
               <div className="relative flex items-center justify-between gap-4">

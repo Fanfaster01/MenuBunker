@@ -54,13 +54,13 @@ export default function DepartmentEditModal({ department, onClose, onSave }) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs"
       onClick={(e) => {
         if (e.target === e.currentTarget && !saving) onClose();
       }}
     >
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-red-50 to-white">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-linear-to-r from-red-50 to-white">
           <div>
             <h2 className="text-lg font-bold text-[#6B5A45]">Editar departamento</h2>
             <p className="text-xs text-gray-500 mt-0.5">
@@ -141,7 +141,7 @@ export default function DepartmentEditModal({ department, onClose, onSave }) {
                     type="checkbox"
                     checked={values.is_visible_on_menu}
                     onChange={(e) => setField('is_visible_on_menu', e.target.checked)}
-                    className="w-4 h-4 rounded border-gray-300 text-[#C8302E] focus:ring-[#C8302E]"
+                    className="w-4 h-4 rounded-sm border-gray-300 text-[#C8302E] focus:ring-[#C8302E]"
                   />
                   <span className="text-sm text-gray-700">
                     {values.is_visible_on_menu ? 'Visible en el menú' : 'Oculto del menú'}
@@ -167,7 +167,7 @@ export default function DepartmentEditModal({ department, onClose, onSave }) {
             <button
               type="submit"
               disabled={saving}
-              className="px-4 py-2 rounded-lg text-sm font-semibold text-white bg-gradient-to-r from-[#C8302E] to-red-700 hover:shadow-md transition-all disabled:opacity-50"
+              className="px-4 py-2 rounded-lg text-sm font-semibold text-white bg-linear-to-r from-[#C8302E] to-red-700 hover:shadow-md transition-all disabled:opacity-50"
             >
               {saving ? 'Guardando...' : 'Guardar cambios'}
             </button>

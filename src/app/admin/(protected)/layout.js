@@ -16,7 +16,7 @@ export default async function AdminProtectedLayout({ children }) {
   const { user } = await requireAdmin();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-orange-50">
+    <div className="min-h-screen bg-linear-to-br from-amber-50 via-white to-orange-50">
       {/* Top bar */}
       <header className="sticky top-0 z-40 border-b border-[#C8A882]/40 bg-white/80 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">

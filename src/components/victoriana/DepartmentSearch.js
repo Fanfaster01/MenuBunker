@@ -55,7 +55,7 @@ export default function DepartmentSearch({ deptSlug, deptName, children }) {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder={`Buscar en ${deptName}...`}
-            className="w-full bg-gray-900 border border-[#C8A882]/40 text-white placeholder:text-gray-500 rounded-full pl-12 pr-12 py-3 focus:outline-none focus:border-[#C8302E] focus:ring-2 focus:ring-[#C8302E]/30 transition-all [&::-webkit-search-cancel-button]:appearance-none [&::-webkit-search-decoration]:appearance-none"
+            className="w-full bg-gray-900 border border-[#C8A882]/40 text-white placeholder:text-gray-500 rounded-full pl-12 pr-12 py-3 focus:outline-hidden focus:border-[#C8302E] focus:ring-2 focus:ring-[#C8302E]/30 transition-all [&::-webkit-search-cancel-button]:appearance-none [&::-webkit-search-decoration]:appearance-none"
           />
           {query && (
             <button

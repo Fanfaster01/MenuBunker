@@ -89,7 +89,7 @@ export default function DepartmentList({ departments }) {
         </div>
       )}
 
-      <div className="bg-white rounded-2xl shadow-sm border border-[#C8A882]/30 overflow-hidden">
+      <div className="bg-white rounded-2xl shadow-xs border border-[#C8A882]/30 overflow-hidden">
         <ul className="divide-y divide-[#C8A882]/15">
           {departments.map((d) => {
             const isToggling = toggling.has(d.codigo);
@@ -121,7 +121,7 @@ export default function DepartmentList({ departments }) {
                         </span>
                       )}
                       {isDeletedFromErp && (
-                        <span className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded bg-red-100 text-red-800 font-bold uppercase tracking-wide">
+                        <span className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded-sm bg-red-100 text-red-800 font-bold uppercase tracking-wide">
                           <AlertTriangle className="w-3 h-3" />
                           Eliminado del ERP
                         </span>
@@ -150,7 +150,7 @@ export default function DepartmentList({ departments }) {
                     <button
                       onClick={() => deletePermanently(d)}
                       disabled={isToggling}
-                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border border-red-300 bg-red-50 text-red-700 hover:bg-red-100 transition-all flex-shrink-0 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border border-red-300 bg-red-50 text-red-700 hover:bg-red-100 transition-all shrink-0 disabled:opacity-50 disabled:cursor-not-allowed"
                       title="Borrar este departamento (cascadea sus grupos)"
                     >
                       {isToggling ? (

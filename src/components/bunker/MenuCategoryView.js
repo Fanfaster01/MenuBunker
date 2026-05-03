@@ -40,7 +40,7 @@ export default function MenuCategoryView({ slug, backHref = '/bunker-restaurant'
 
   if (state.status === 'loading') {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-white via-white to-[#FAF5EA] text-gray-900 p-4">
+      <div className="min-h-screen bg-linear-to-b from-white via-white to-[#FAF5EA] text-gray-900 p-4">
         <Header title={title} backHref={backHref} />
         <ProductListSkeleton count={6} />
         <Footer />
@@ -61,7 +61,7 @@ export default function MenuCategoryView({ slug, backHref = '/bunker-restaurant'
   const { category, items } = state.data;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white via-white to-[#FAF5EA] text-gray-900 p-4">
+    <div className="min-h-screen bg-linear-to-b from-white via-white to-[#FAF5EA] text-gray-900 p-4">
       <Header title={category.name.toUpperCase()} backHref={backHref} />
 
       {category.description && (
@@ -71,7 +71,7 @@ export default function MenuCategoryView({ slug, backHref = '/bunker-restaurant'
       )}
 
       {category.notice && (
-        <div className="max-w-3xl mx-auto mb-6 flex gap-3 p-4 bg-gradient-to-r from-[#FAF5EA] to-[#F3ECDB] border-l-4 border-[#C8A882] rounded-r-lg shadow-sm">
+        <div className="max-w-3xl mx-auto mb-6 flex gap-3 p-4 bg-linear-to-r from-[#FAF5EA] to-[#F3ECDB] border-l-4 border-[#C8A882] rounded-r-lg shadow-xs">
           <Info className="w-5 h-5 text-[#8B7355] shrink-0 mt-0.5" />
           <p className="text-sm text-[#6B5A45] leading-relaxed">
             <span className="font-semibold">Importante:</span> {category.notice}
@@ -96,7 +96,7 @@ export default function MenuCategoryView({ slug, backHref = '/bunker-restaurant'
             <article
               key={item.xetux_item_id}
               style={{ animationDelay: `${Math.min(idx * 25, 400)}ms` }}
-              className="fade-in-up group bg-white rounded-xl p-4 border border-[#C8A882]/50 shadow-sm hover:shadow-md hover:border-[#8B7355]/70 transition-all duration-200"
+              className="fade-in-up group bg-white rounded-xl p-4 border border-[#C8A882]/50 shadow-xs hover:shadow-md hover:border-[#8B7355]/70 transition-all duration-200"
             >
               <div className="flex justify-between items-start gap-3">
                 <div className="flex-1 min-w-0">

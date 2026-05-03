@@ -66,7 +66,7 @@ export default function GroupView({ deptSlug, groupSlug }) {
 
   if (state.status === 'loading') {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-black via-black to-[#0c0c0c] text-white p-4">
+      <div className="min-h-screen bg-linear-to-b from-black via-black to-[#0c0c0c] text-white p-4">
         <VictorianaHeader title={title} backHref={backHref} />
         <ProductListSkeleton count={8} />
         <VictorianaFooter />
@@ -87,11 +87,11 @@ export default function GroupView({ deptSlug, groupSlug }) {
   const { department, group, pagination } = state.data;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-black via-black to-[#0c0c0c] text-white p-4">
+    <div className="min-h-screen bg-linear-to-b from-black via-black to-[#0c0c0c] text-white p-4">
       <VictorianaHeader title={group.name.toUpperCase()} backHref={backHref} />
 
       {department?.notice && (
-        <div className="max-w-3xl mx-auto mb-6 flex gap-3 p-4 bg-gradient-to-r from-[#1a1a1a] to-[#0c0c0c] border-l-4 border-[#C8302E] rounded-r-lg shadow-md">
+        <div className="max-w-3xl mx-auto mb-6 flex gap-3 p-4 bg-linear-to-r from-[#1a1a1a] to-[#0c0c0c] border-l-4 border-[#C8302E] rounded-r-lg shadow-md">
           <p className="text-sm text-gray-300 leading-relaxed">
             <span className="font-semibold text-[#C8A882]">Importante:</span> {department.notice}
           </p>
@@ -124,7 +124,7 @@ export default function GroupView({ deptSlug, groupSlug }) {
                 <button
                   onClick={loadMore}
                   disabled={loadingMore}
-                  className="bg-gradient-to-r from-[#C8302E] to-[#A02624] hover:from-[#A02624] hover:to-[#8B1F1D] disabled:opacity-60 disabled:cursor-not-allowed text-white px-8 py-3 rounded-full font-semibold shadow-md transition-all"
+                  className="bg-linear-to-r from-[#C8302E] to-[#A02624] hover:from-[#A02624] hover:to-[#8B1F1D] disabled:opacity-60 disabled:cursor-not-allowed text-white px-8 py-3 rounded-full font-semibold shadow-md transition-all"
                 >
                   {loadingMore ? 'Cargando...' : `Cargar más (${(pagination.total ?? 0) - items.length} restantes)`}
                 </button>

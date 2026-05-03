@@ -133,7 +133,7 @@ export default function GroupList({ groups, departments }) {
       )}
 
       {/* Filter bar */}
-      <div className="bg-white rounded-2xl shadow-sm border border-[#C8A882]/30 p-4 mb-4">
+      <div className="bg-white rounded-2xl shadow-xs border border-[#C8A882]/30 p-4 mb-4">
         <div className="flex flex-wrap gap-3 items-center">
           <div className="flex-1 min-w-[220px] relative">
             <Search className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
@@ -142,14 +142,14 @@ export default function GroupList({ groups, departments }) {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Buscar por nombre…"
-              className="w-full pl-9 pr-3 py-2 rounded-lg border border-gray-300 text-sm text-gray-900 focus:outline-none focus:border-[#C8302E] focus:ring-2 focus:ring-[#C8302E]/15"
+              className="w-full pl-9 pr-3 py-2 rounded-lg border border-gray-300 text-sm text-gray-900 focus:outline-hidden focus:border-[#C8302E] focus:ring-2 focus:ring-[#C8302E]/15"
             />
           </div>
 
           <select
             value={deptFilter}
             onChange={(e) => setDeptFilter(e.target.value)}
-            className="py-2 px-3 rounded-lg border border-gray-300 bg-white text-sm text-gray-900 focus:outline-none focus:border-[#C8302E]"
+            className="py-2 px-3 rounded-lg border border-gray-300 bg-white text-sm text-gray-900 focus:outline-hidden focus:border-[#C8302E]"
           >
             <option value="all">Todos los departamentos</option>
             {departments.map((d) => (
@@ -162,7 +162,7 @@ export default function GroupList({ groups, departments }) {
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="py-2 px-3 rounded-lg border border-gray-300 bg-white text-sm text-gray-900 focus:outline-none focus:border-[#C8302E]"
+            className="py-2 px-3 rounded-lg border border-gray-300 bg-white text-sm text-gray-900 focus:outline-hidden focus:border-[#C8302E]"
           >
             <option value="all">Todos los estados</option>
             <option value="visible">Visibles</option>
@@ -187,7 +187,7 @@ export default function GroupList({ groups, departments }) {
         </div>
       </div>
 
-      <div className="bg-white rounded-2xl shadow-sm border border-[#C8A882]/30 overflow-hidden">
+      <div className="bg-white rounded-2xl shadow-xs border border-[#C8A882]/30 overflow-hidden">
         {filteredGroups.length === 0 ? (
           <div className="text-center py-16 text-gray-500">
             {hasActiveFilters ? 'Ningún grupo coincide con los filtros.' : 'No hay grupos.'}
@@ -225,12 +225,12 @@ export default function GroupList({ groups, departments }) {
                           </span>
                         )}
                         {isDeletedFromErp && (
-                          <span className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded bg-red-100 text-red-800 font-bold uppercase tracking-wide">
+                          <span className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded-sm bg-red-100 text-red-800 font-bold uppercase tracking-wide">
                             <AlertTriangle className="w-3 h-3" />
                             Eliminado del ERP
                           </span>
                         )}
-                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-[#C8A882]/15 text-[#8B7355] font-medium">
+                        <span className="text-[10px] px-1.5 py-0.5 rounded-sm bg-[#C8A882]/15 text-[#8B7355] font-medium">
                           {g.department_name}
                         </span>
                       </div>
@@ -248,7 +248,7 @@ export default function GroupList({ groups, departments }) {
                       <button
                         onClick={() => deletePermanently(g)}
                         disabled={isToggling}
-                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border border-red-300 bg-red-50 text-red-700 hover:bg-red-100 transition-all flex-shrink-0 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border border-red-300 bg-red-50 text-red-700 hover:bg-red-100 transition-all shrink-0 disabled:opacity-50 disabled:cursor-not-allowed"
                         title="Borrar este grupo del caché y su metadata"
                       >
                         {isToggling ? (

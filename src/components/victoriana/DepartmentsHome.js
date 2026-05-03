@@ -31,7 +31,7 @@ export default function DepartmentsHome() {
   }, []);
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-black via-black to-[#0c0c0c] text-white p-4">
+    <main className="min-h-screen bg-linear-to-b from-black via-black to-[#0c0c0c] text-white p-4">
       <div className="max-w-sm mx-auto mb-8 pt-4">
         <Image
           src="/images/victoriana/LOGO_LA VICTORIANA_WHITE_COLOR.png"
@@ -46,7 +46,7 @@ export default function DepartmentsHome() {
       <div className="flex justify-center mb-10">
         <Link
           href="/"
-          className="group relative bg-gradient-to-r from-[#C8302E] to-[#A02624] text-white px-8 py-3 rounded-full transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 font-medium"
+          className="group relative bg-linear-to-r from-[#C8302E] to-[#A02624] text-white px-8 py-3 rounded-full transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 font-medium"
         >
           <span className="flex items-center">
             <span className="mr-2 transition-transform duration-300 group-hover:-translate-x-1">←</span>
@@ -77,7 +77,7 @@ export default function DepartmentsHome() {
               style={{ animationDelay: `${idx * 30}ms` }}
               className="fade-in-up group relative overflow-hidden bg-gray-900 rounded-2xl p-6 border border-[#C8A882]/50 shadow-lg hover:shadow-xl hover:-translate-y-1 hover:border-[#C8302E] transition-all duration-300 flex flex-col justify-center min-h-32"
             >
-              <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-[#C8302E]/0 via-[#C8302E]/0 to-[#C8302E]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <div className="pointer-events-none absolute inset-0 bg-linear-to-br from-[#C8302E]/0 via-[#C8302E]/0 to-[#C8302E]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
               <div className="relative flex items-center justify-between gap-4">
                 <div className="flex-1 text-left">
