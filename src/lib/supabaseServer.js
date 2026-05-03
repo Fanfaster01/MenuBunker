@@ -26,7 +26,7 @@ export async function createSupabaseServerClient() {
               cookieStore.set(name, value, options)
             );
           } catch {
-            // Server components no pueden escribir cookies — el middleware lo hace.
+            // Server components no pueden escribir cookies — el proxy (src/proxy.js) lo hace.
           }
         },
       },

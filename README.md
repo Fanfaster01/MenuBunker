@@ -171,7 +171,7 @@ MenuBunker/
 │   │   └── sync/
 │   │       ├── xetux.mjs                 # Lógica sync Bunker
 │   │       └── victoriana.mjs            # Lógica sync Victoriana
-│   └── middleware.js                     # Refresca session cookie en /admin/*
+│   └── proxy.js                          # Refresca session cookie en /admin/* (antes middleware.js, renombrado en Next 16)
 ├── scripts/
 │   ├── sync-xetux.js                     # CLI wrapper (delegado al .mjs)
 │   ├── sync-victoriana.js                # CLI wrapper
