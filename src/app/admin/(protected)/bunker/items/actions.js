@@ -212,6 +212,127 @@ export async function deleteItemPermanently(xetuxItemId) {
 }
 
 /**
+ * Aplica el mismo patch a varios items de una.
+ *
+ * Uso típico: ocultar/mostrar 10 items, destacar/quitar destacado en bulk.
+ * No se permite cambiar `image_url` ni `description` en bulk (no tiene sentido
+ * UX y evita pisar datos personalizados sin querer). Solo flags + sort_order.
+ *
+ * @param {number[]} xetuxItemIds  Array de IDs (max 200)
+ * @param {object} patch           Solo claves de BULK_ALLOWED
+ */
+const BULK_ALLOWED = ['is_featured', 'is_hidden', 'sort_order'];
+const MAX_BULK_SIZE = 200;
+
+export async function bulkUpdateItemMeta(xetuxItemIds, patch) {
+  const { supabase } = await requireAdmin();
+
+  if (!Array.isArray(xetuxItemIds) || xetuxItemIds.length === 0) {
+    return { ok: false, error: 'xetuxItemIds debe ser un array no vacío' };
+  }
+  if (xetuxItemIds.length > MAX_BULK_SIZE) {
+    return { ok: false, error: `Máximo ${MAX_BULK_SIZE} items por operación bulk` };
+  }
+  if (!xetuxItemIds.every((id) => typeof id === 'number' && Number.isInteger(id))) {
+    return { ok: false, error: 'Todos los IDs deben ser enteros' };
+  }
+
+  const cleanPatch = {};
+  for (const key of BULK_ALLOWED) {
+    if (Object.prototype.hasOwnProperty.call(patch, key)) {
+      cleanPatch[key] = patch[key];
+    }
+  }
+  if (Object.keys(cleanPatch).length === 0) {
+    return { ok: false, error: 'Sin cambios válidos. Permitidos: ' + BULK_ALLOWED.join(', ') };
+  }
+
+  // Upsert masivo: una fila por item con el mismo patch.
+  // onConflict por PK (xetux_item_id) — si ya existe meta se actualiza, si no se crea.
+  const rows = xetuxItemIds.map((id) => ({ xetux_item_id: id, ...cleanPatch }));
+
+  const { error } = await supabase
+    .from('bunker_item_meta')
+    .upsert(rows, { onConflict: 'xetux_item_id' });
+
+  if (error) {
+    console.error('[bulkUpdateItemMeta]', error);
+    return { ok: false, error: error.message || 'Error al guardar bulk' };
+  }
+
+  revalidatePath('/admin/bunker/items');
+  revalidatePath('/bunker-restaurant/[slug]', 'page');
+
+  return { ok: true, count: xetuxItemIds.length };
+}
+
+/**
+ * Borra DEFINITIVAMENTE varios items en una operación. Solo permite los
+ * que están marcados como is_active=false (eliminados del ERP). Si alguno
+ * no cumple, se rechaza la operación entera (todo o nada).
+ *
+ * Borra también las imágenes asociadas del Storage. CASCADE FK borra metas.
+ */
+export async function bulkDeleteItemsPermanently(xetuxItemIds) {
+  await requireAdmin();
+
+  if (!Array.isArray(xetuxItemIds) || xetuxItemIds.length === 0) {
+    return { ok: false, error: 'xetuxItemIds debe ser un array no vacío' };
+  }
+  if (xetuxItemIds.length > MAX_BULK_SIZE) {
+    return { ok: false, error: `Máximo ${MAX_BULK_SIZE} items por operación bulk` };
+  }
+
+  const admin = getSupabaseAdmin();
+
+  // Guard: TODOS los seleccionados deben ser is_active=false.
+  const { data: rows, error: fetchErr } = await admin
+    .from('bunker_item_cache')
+    .select('xetux_item_id, item_name, is_active, bunker_item_meta(image_url)')
+    .in('xetux_item_id', xetuxItemIds);
+
+  if (fetchErr) return { ok: false, error: fetchErr.message };
+
+  const found = new Set((rows ?? []).map((r) => r.xetux_item_id));
+  const missing = xetuxItemIds.filter((id) => !found.has(id));
+  if (missing.length > 0) {
+    return { ok: false, error: `Items no encontrados: ${missing.length}` };
+  }
+
+  const stillActive = (rows ?? []).filter((r) => r.is_active !== false);
+  if (stillActive.length > 0) {
+    return {
+      ok: false,
+      error: `${stillActive.length} ítem(s) aún están activos en el ERP. Solo se pueden borrar los marcados como «Eliminados del ERP».`,
+    };
+  }
+
+  // Borrar imágenes del Storage en paralelo (best-effort, no bloqueante)
+  const paths = (rows ?? [])
+    .map((r) => {
+      const url = r.bunker_item_meta?.[0]?.image_url || r.bunker_item_meta?.image_url;
+      return url ? extractStoragePathFromUrl(url, BUCKET) : null;
+    })
+    .filter(Boolean);
+  if (paths.length > 0) {
+    await admin.storage.from(BUCKET).remove(paths).catch(() => {
+      /* best-effort */
+    });
+  }
+
+  // DELETE en cache (CASCADE borra meta automáticamente)
+  const { error: delErr, count } = await admin
+    .from('bunker_item_cache')
+    .delete({ count: 'exact' })
+    .in('xetux_item_id', xetuxItemIds);
+
+  if (delErr) return { ok: false, error: delErr.message };
+
+  revalidatePath('/admin/bunker/items');
+  return { ok: true, count: count ?? xetuxItemIds.length };
+}
+
+/**
  * Helper: extrae el path interno del Storage desde un publicUrl.
  */
 function extractStoragePathFromUrl(publicUrl, bucket) {

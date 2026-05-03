@@ -3,8 +3,8 @@
 import { useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { Pencil, Image as ImageIcon, FileText, Star, Eye, EyeOff, Search, X, Package, AlertTriangle, Trash2 } from 'lucide-react';
-import { updateProductMeta, removeProductImage, deleteProductPermanently } from '../actions';
+import { Pencil, Image as ImageIcon, FileText, Star, Eye, EyeOff, Search, X, Package, AlertTriangle, Trash2, CheckSquare, Square } from 'lucide-react';
+import { updateProductMeta, removeProductImage, deleteProductPermanently, bulkUpdateProductMeta, bulkDeleteProductsPermanently } from '../actions';
 import { extractStoragePath } from '@/lib/imageUpload';
 import ItemEditModal from './ItemEditModal';
 
@@ -20,6 +20,8 @@ export default function ItemList({ items, departments, groups }) {
   const [groupFilter, setGroupFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+  const [selected, setSelected] = useState(() => new Set()); // codigos seleccionados (bulk)
+  const [bulkRunning, setBulkRunning] = useState(false);
 
   // Grupos que pertenecen al departamento seleccionado (si hay)
   const availableGroups = useMemo(() => {
@@ -156,6 +158,78 @@ export default function ItemList({ items, departments, groups }) {
 
   const hasActiveFilters = query || deptFilter !== 'all' || groupFilter !== 'all' || statusFilter !== 'all';
 
+  // ---------- Bulk selection ----------
+  // Para Victoriana solo seleccionamos los items VISIBLES en el viewport actual
+  // (paginación virtual). Si el user quiere seleccionar más de 100, debe scrollear
+  // primero ("Mostrar más") y luego volver a "Seleccionar todos los visibles".
+  // Nota: `visibleItems` ya está computado más arriba como filteredItems.slice(0, visibleCount).
+  const visibleCodigos = useMemo(() => visibleItems.map((i) => i.codigo), [visibleItems]);
+  const selectedCount = selected.size;
+  const allVisibleSelected = visibleCodigos.length > 0 && visibleCodigos.every((c) => selected.has(c));
+
+  function toggleSelect(codigo) {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(codigo)) next.delete(codigo);
+      else next.add(codigo);
+      return next;
+    });
+  }
+
+  function toggleSelectAllVisible() {
+    setSelected((prev) => {
+      if (allVisibleSelected) {
+        const next = new Set(prev);
+        visibleCodigos.forEach((c) => next.delete(c));
+        return next;
+      }
+      const next = new Set(prev);
+      visibleCodigos.forEach((c) => next.add(c));
+      return next;
+    });
+  }
+
+  function clearSelection() {
+    setSelected(new Set());
+  }
+
+  async function runBulk(label, action) {
+    if (selectedCount === 0) return;
+    setBulkRunning(true);
+    const codigos = Array.from(selected);
+    const result = await action(codigos);
+    setBulkRunning(false);
+    if (!result.ok) {
+      showFlash('error', result.error || `No se pudo ${label}`);
+      return;
+    }
+    showFlash('success', `${result.count ?? codigos.length} producto(s) ${label}`);
+    clearSelection();
+    router.refresh();
+  }
+
+  async function bulkHide() {
+    return runBulk('ocultados', (codigos) => bulkUpdateProductMeta(codigos, { is_hidden: true }));
+  }
+  async function bulkShow() {
+    return runBulk('visibles', (codigos) => bulkUpdateProductMeta(codigos, { is_hidden: false }));
+  }
+  async function bulkFeature() {
+    return runBulk('destacados', (codigos) => bulkUpdateProductMeta(codigos, { is_featured: true }));
+  }
+  async function bulkUnfeature() {
+    return runBulk('sin destacar', (codigos) => bulkUpdateProductMeta(codigos, { is_featured: false }));
+  }
+  async function bulkDelete() {
+    const confirmed = window.confirm(
+      `¿Borrar definitivamente ${selectedCount} producto(s)?\n\n` +
+        `Solo los marcados como «Eliminados del ERP» pueden borrarse. Si alguno no cumple, ` +
+        `la operación entera se cancela (todo o nada).\n\nNo se puede deshacer.`
+    );
+    if (!confirmed) return;
+    return runBulk('eliminados definitivamente', (codigos) => bulkDeleteProductsPermanently(codigos));
+  }
+
   return (
     <>
       {flash && (
@@ -252,6 +326,59 @@ export default function ItemList({ items, departments, groups }) {
         </div>
       </div>
 
+      {/* Bulk action bar (sticky cuando hay selección) */}
+      {selectedCount > 0 && (
+        <div className="sticky top-2 z-20 mb-3 flex flex-wrap items-center gap-2 rounded-xl border border-[#C8A882]/40 bg-white shadow-md px-4 py-2.5">
+          <span className="text-sm font-semibold text-[#6B5A45]">
+            {selectedCount} producto(s) seleccionado(s)
+          </span>
+          <div className="flex flex-wrap gap-1.5 ml-auto">
+            <button
+              onClick={bulkShow}
+              disabled={bulkRunning}
+              className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold border border-green-200 bg-green-50 text-green-700 hover:bg-green-100 disabled:opacity-50"
+            >
+              <Eye className="w-3.5 h-3.5" /> Mostrar
+            </button>
+            <button
+              onClick={bulkHide}
+              disabled={bulkRunning}
+              className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold border border-gray-300 bg-gray-100 text-gray-700 hover:bg-gray-200 disabled:opacity-50"
+            >
+              <EyeOff className="w-3.5 h-3.5" /> Ocultar
+            </button>
+            <button
+              onClick={bulkFeature}
+              disabled={bulkRunning}
+              className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold border border-amber-200 bg-amber-50 text-amber-700 hover:bg-amber-100 disabled:opacity-50"
+            >
+              <Star className="w-3.5 h-3.5" /> Destacar
+            </button>
+            <button
+              onClick={bulkUnfeature}
+              disabled={bulkRunning}
+              className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold border border-gray-300 bg-white text-gray-600 hover:bg-gray-100 disabled:opacity-50"
+            >
+              Quitar destaque
+            </button>
+            <button
+              onClick={bulkDelete}
+              disabled={bulkRunning}
+              className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold border border-red-300 bg-red-50 text-red-700 hover:bg-red-100 disabled:opacity-50"
+            >
+              <Trash2 className="w-3.5 h-3.5" /> Borrar
+            </button>
+            <button
+              onClick={clearSelection}
+              disabled={bulkRunning}
+              className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium text-gray-500 hover:bg-gray-100 disabled:opacity-50"
+            >
+              <X className="w-3 h-3" /> Limpiar
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Items list */}
       <div className="bg-white rounded-2xl shadow-xs border border-[#C8A882]/30 overflow-hidden">
         {filteredItems.length === 0 ? (
@@ -259,18 +386,38 @@ export default function ItemList({ items, departments, groups }) {
             {hasActiveFilters ? 'Ningún producto coincide con los filtros.' : 'No hay productos.'}
           </div>
         ) : (
-          <ul className="divide-y divide-[#C8A882]/15">
-            {visibleItems.map((item) => (
-              <ItemRow
-                key={item.codigo}
-                item={item}
-                isToggling={toggling.has(item.codigo)}
-                onEdit={() => setEditing(item)}
-                onToggleVisibility={() => toggleVisibility(item)}
-                onDeletePermanently={() => deletePermanently(item)}
-              />
-            ))}
-          </ul>
+          <>
+            <div className="px-4 py-2 border-b border-[#C8A882]/20 bg-gray-50/50 flex items-center gap-2">
+              <button
+                onClick={toggleSelectAllVisible}
+                className="flex items-center gap-1.5 text-xs font-medium text-gray-600 hover:text-[#6B5A45] transition-colors"
+                aria-label={allVisibleSelected ? 'Deseleccionar visibles' : 'Seleccionar todos los visibles'}
+              >
+                {allVisibleSelected ? (
+                  <CheckSquare className="w-4 h-4 text-[#8B7355]" />
+                ) : (
+                  <Square className="w-4 h-4" />
+                )}
+                {allVisibleSelected
+                  ? 'Deseleccionar visibles'
+                  : `Seleccionar todos los visibles (${visibleCodigos.length})`}
+              </button>
+            </div>
+            <ul className="divide-y divide-[#C8A882]/15">
+              {visibleItems.map((item) => (
+                <ItemRow
+                  key={item.codigo}
+                  item={item}
+                  isSelected={selected.has(item.codigo)}
+                  onToggleSelect={() => toggleSelect(item.codigo)}
+                  isToggling={toggling.has(item.codigo)}
+                  onEdit={() => setEditing(item)}
+                  onToggleVisibility={() => toggleVisibility(item)}
+                  onDeletePermanently={() => deletePermanently(item)}
+                />
+              ))}
+            </ul>
+          </>
         )}
       </div>
 
@@ -298,7 +445,7 @@ export default function ItemList({ items, departments, groups }) {
   );
 }
 
-function ItemRow({ item, isToggling, onEdit, onToggleVisibility, onDeletePermanently }) {
+function ItemRow({ item, isSelected, onToggleSelect, isToggling, onEdit, onToggleVisibility, onDeletePermanently }) {
   const price = item.final_price != null ? `$${Number(item.final_price).toFixed(2)}` : '—';
   const hasImage = !!item.image_url;
   const hasDesc = !!item.custom_description;
@@ -314,7 +461,14 @@ function ItemRow({ item, isToggling, onEdit, onToggleVisibility, onDeletePermane
   }
 
   return (
-    <li className={`p-3 sm:p-4 flex items-center gap-3 transition-colors ${rowBg}`}>
+    <li className={`p-3 sm:p-4 flex items-center gap-3 transition-colors ${rowBg} ${isSelected ? 'ring-2 ring-inset ring-[#C8302E]/40' : ''}`}>
+      <input
+        type="checkbox"
+        checked={!!isSelected}
+        onChange={onToggleSelect}
+        className="w-4 h-4 rounded-sm border-gray-300 text-[#C8302E] focus:ring-[#C8302E] shrink-0 cursor-pointer"
+        aria-label={isSelected ? 'Deseleccionar producto' : 'Seleccionar producto'}
+      />
       <div className="relative w-12 h-12 sm:w-14 sm:h-14 rounded-lg overflow-hidden border border-gray-200 bg-gray-100 shrink-0">
         {hasImage ? (
           <Image src={item.image_url} alt={item.effective_name} fill sizes="56px" className="object-cover" unoptimized />

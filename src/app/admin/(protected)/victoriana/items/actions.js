@@ -171,6 +171,118 @@ export async function deleteProductPermanently(codigo) {
 }
 
 /**
+ * Bulk update: aplica el mismo patch a varios productos. Usado para ocultar/
+ * mostrar/destacar masivamente desde la lista del admin. Solo flags + sort_order
+ * se permiten en bulk (NO descripcion ni imagen, evita pisar datos).
+ */
+const BULK_PRODUCT_ALLOWED = ['is_featured', 'is_hidden', 'sort_order'];
+const MAX_PRODUCT_BULK_SIZE = 200;
+
+export async function bulkUpdateProductMeta(codigos, patch) {
+  const { supabase } = await requireAdmin();
+
+  if (!Array.isArray(codigos) || codigos.length === 0) {
+    return { ok: false, error: 'codigos debe ser un array no vacío' };
+  }
+  if (codigos.length > MAX_PRODUCT_BULK_SIZE) {
+    return { ok: false, error: `Máximo ${MAX_PRODUCT_BULK_SIZE} productos por operación bulk` };
+  }
+  if (!codigos.every((c) => typeof c === 'string' && c.length > 0)) {
+    return { ok: false, error: 'Todos los codigos deben ser strings no vacíos' };
+  }
+
+  const cleanPatch = {};
+  for (const key of BULK_PRODUCT_ALLOWED) {
+    if (Object.prototype.hasOwnProperty.call(patch, key)) {
+      cleanPatch[key] = patch[key];
+    }
+  }
+  if (Object.keys(cleanPatch).length === 0) {
+    return { ok: false, error: 'Sin cambios válidos. Permitidos: ' + BULK_PRODUCT_ALLOWED.join(', ') };
+  }
+
+  const rows = codigos.map((c) => ({ codigo: c, ...cleanPatch }));
+
+  const { error } = await supabase
+    .from('victoriana_product_meta')
+    .upsert(rows, { onConflict: 'codigo' });
+
+  if (error) {
+    console.error('[bulkUpdateProductMeta]', error);
+    return { ok: false, error: error.message || 'Error al guardar bulk' };
+  }
+
+  revalidatePath('/admin/victoriana/items');
+  revalidatePath('/la-victoriana/[slug]/[groupSlug]', 'page');
+
+  return { ok: true, count: codigos.length };
+}
+
+/**
+ * Borra DEFINITIVAMENTE varios productos en una operación. Solo permite los
+ * que están marcados como is_active=false (eliminados del ERP). Si alguno
+ * no cumple, se rechaza la operación entera (todo o nada).
+ */
+export async function bulkDeleteProductsPermanently(codigos) {
+  await requireAdmin();
+
+  if (!Array.isArray(codigos) || codigos.length === 0) {
+    return { ok: false, error: 'codigos debe ser un array no vacío' };
+  }
+  if (codigos.length > MAX_PRODUCT_BULK_SIZE) {
+    return { ok: false, error: `Máximo ${MAX_PRODUCT_BULK_SIZE} productos por operación bulk` };
+  }
+
+  const admin = getSupabaseAdmin();
+
+  const { data: rows, error: fetchErr } = await admin
+    .from('victoriana_product_cache')
+    .select('codigo, descri, is_active, victoriana_product_meta(image_url)')
+    .in('codigo', codigos);
+
+  if (fetchErr) return { ok: false, error: fetchErr.message };
+
+  const found = new Set((rows ?? []).map((r) => r.codigo));
+  const missing = codigos.filter((c) => !found.has(c));
+  if (missing.length > 0) {
+    return { ok: false, error: `Productos no encontrados: ${missing.length}` };
+  }
+
+  const stillActive = (rows ?? []).filter((r) => r.is_active !== false);
+  if (stillActive.length > 0) {
+    return {
+      ok: false,
+      error: `${stillActive.length} producto(s) aún están activos en el ERP. Solo se pueden borrar los marcados como «Eliminados del ERP».`,
+    };
+  }
+
+  const paths = (rows ?? [])
+    .map((r) => {
+      const url = r.victoriana_product_meta?.[0]?.image_url || r.victoriana_product_meta?.image_url;
+      if (!url) return null;
+      const marker = `/object/public/${BUCKET}/`;
+      const idx = url.indexOf(marker);
+      return idx >= 0 ? decodeURIComponent(url.substring(idx + marker.length)) : null;
+    })
+    .filter(Boolean);
+  if (paths.length > 0) {
+    await admin.storage.from(BUCKET).remove(paths).catch(() => {
+      /* best-effort */
+    });
+  }
+
+  const { error: delErr, count } = await admin
+    .from('victoriana_product_cache')
+    .delete({ count: 'exact' })
+    .in('codigo', codigos);
+
+  if (delErr) return { ok: false, error: delErr.message };
+
+  revalidatePath('/admin/victoriana/items');
+  return { ok: true, count: count ?? codigos.length };
+}
+
+/**
  * Borra la imagen de un producto.
  */
 export async function removeProductImage(codigo, storagePath) {
