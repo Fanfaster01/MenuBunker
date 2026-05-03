@@ -7,6 +7,7 @@ import BunkerLogo from '@/components/common/BunkerLogo';
 import Footer from '@/components/common/Footer';
 import ErrorDisplay from '@/components/common/ErrorDisplay';
 import { CategoryGridSkeleton } from '@/components/bunker/skeletons';
+import BunkerGlobalSearch from '@/components/bunker/BunkerGlobalSearch';
 
 export default function BunkerRestaurantHome() {
   const [state, setState] = useState({ status: 'loading', topLevel: [], error: null });
@@ -50,19 +51,20 @@ export default function BunkerRestaurantHome() {
 
       <div className="text-center mb-8">
         <h2 className="text-2xl md:text-3xl font-bold text-[#8B7355] mb-2">Nuestro Menú</h2>
-        <p className="text-sm text-gray-500">Elige una categoría para empezar</p>
+        <p className="text-sm text-gray-500">Elige una categoría o busca un producto</p>
       </div>
 
-      {state.status === 'loading' && <CategoryGridSkeleton count={4} />}
+      <BunkerGlobalSearch>
+        {state.status === 'loading' && <CategoryGridSkeleton count={4} />}
 
-      {state.status === 'error' && (
-        <div className="max-w-2xl mx-auto">
-          <ErrorDisplay error={state.error} />
-        </div>
-      )}
+        {state.status === 'error' && (
+          <div className="max-w-2xl mx-auto">
+            <ErrorDisplay error={state.error} />
+          </div>
+        )}
 
-      {state.status === 'ok' && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto">
+        {state.status === 'ok' && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto">
           {state.topLevel.map((item, idx) => (
             <Link
               href={`/bunker-restaurant/${item.slug}`}
@@ -89,8 +91,9 @@ export default function BunkerRestaurantHome() {
               </div>
             </Link>
           ))}
-        </div>
-      )}
+          </div>
+        )}
+      </BunkerGlobalSearch>
 
       <Footer />
     </main>
